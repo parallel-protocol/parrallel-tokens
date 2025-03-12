@@ -1,11 +1,11 @@
 {
-  "name": "ag-tokens",
+  "name": "parallel-tokens",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "ci:coverage": "forge coverage --report lcov --ir-minimum && yarn lcov:clean",
-    "coverage": "FOUNDRY_PROFILE=dev forge coverage --report lcov --ir-minimum && yarn lcov:clean && yarn lcov:generate-html",
+    "coverage": "FOUNDRY_PROFILE=dev forge coverage --ir-minimum --report lcov && lcov --remove lcov.info -o lcov.info \"test/*\" \"node_modules/*\" && genhtml lcov.info -o coverage",
     "compile": "forge build",
     "compile:dev": "FOUNDRY_PROFILE=dev forge build",
     "deploy": "forge script --skip test --broadcast --verify --slow -vvvv --rpc-url",
@@ -42,12 +42,18 @@
     "url": "https://github.com/AngleProtocol/AgTokens/issues"
   },
   "devDependencies": {
-    "@angleprotocol/sdk": "0.38.8",
-    "prettier": "^2.0.0",
-    "prettier-plugin-solidity": "^1.1.3",
+    "@layerzerolabs/lz-definitions": "^3.0.74",
+    "@layerzerolabs/test-devtools-evm-foundry": "^6.0.2",
+    "forge-std": "github:foundry-rs/forge-std#v1.9.5",
+    "prettier": "^3.5.3",
+    "prettier-plugin-solidity": "^1.4.2",
     "solhint": "^3.5.1",
-    "solhint-plugin-prettier": "^0.0.5"
+    "solhint-plugin-prettier": "^0.1.0",
+    "solidity-bytes-utils": "^0.8.3"
   },
   "dependencies": {
+    "@layerzerolabs/lz-evm-oapp-v2": "^3.0.74",
+    "@openzeppelin/contracts": "^5.2.0",
+    "@openzeppelin/contracts-upgradeable": "^5.2.0"
   }
 }

@@ -1,87 +1,89 @@
 // SPDX-License-Identifier: GPL-3.0
+pragma solidity 0.8.28;
 
-pragma solidity ^0.8.12;
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import {AccessManagedUpgradeable} from "@openzeppelin/contracts-upgradeable/access/manager/AccessManagedUpgradeable.sol";
+import {ReentrancyGuardTransientUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardTransientUpgradeable.sol";
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
+import {IERC3156FlashLender} from "@openzeppelin/contracts/interfaces/IERC3156FlashLender.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "oz-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "oz-upgradeable/proxy/utils/Initializable.sol";
-import "oz/interfaces/IERC3156FlashBorrower.sol";
-import "oz/interfaces/IERC3156FlashLender.sol";
-import "oz/token/ERC20/IERC20.sol";
-import "oz/token/ERC20/utils/SafeERC20.sol";
+import {ITokenP} from "../interfaces/ITokenP.sol";
+import {CommonErrorsLib} from "../libraries/CommonErrorsLib.sol";
 
-import "../interfaces/IAgToken.sol";
-import "../interfaces/ICoreBorrow.sol";
-import "../interfaces/IFlashAngle.sol";
-import "../interfaces/ITreasury.sol";
-
-/// @title FlashAngle
-/// @author Angle Labs, Inc.
-/// @notice Contract to take flash loans on top of several AgToken contracts
-contract FlashAngle is IERC3156FlashLender, IFlashAngle, Initializable, ReentrancyGuardUpgradeable {
+/// @title FlashParallelTokens
+/// @author Cooper Labs
+/// @custom:contact security@cooperlabs.xyz
+/// @notice Contract to take flash loans on top of Parallel Tokens
+contract FlashParallelTokens is
+    IERC3156FlashLender,
+    AccessManagedUpgradeable,
+    ReentrancyGuardTransientUpgradeable,
+    UUPSUpgradeable
+{
     using SafeERC20 for IERC20;
+
     /// @notice Base used for parameter computation
     uint256 public constant BASE_PARAMS = 10 ** 9;
+
     /// @notice Success message received when calling a `FlashBorrower` contract
     bytes32 public constant CALLBACK_SUCCESS = keccak256("ERC3156FlashBorrower.onFlashLoan");
 
-    /// @notice Struct encoding for a given stablecoin the parameters
-    struct StablecoinData {
-        // Maximum amount borrowable for this stablecoin
+    /// @notice Struct encoding for a given token the parameters
+    struct tokenData {
+        // Maximum amount borrowable for this token
         uint256 maxBorrowable;
-        // Flash loan fee taken by the protocol for a flash loan on this stablecoin
+        // Flash loan fee taken by the protocol for a flash loan on this token
         uint64 flashLoanFee;
-        // Treasury address responsible of the stablecoin
-        address treasury;
+        // Whether the token flash loan is active
+        bool isActive;
     }
+
+    /// @notice Address of the recipient of the flash loan fee
+    address public flashLoanFeeRecipient;
 
     // ======================= Parameters and References ===========================
 
-    /// @notice Maps a stablecoin to the data and parameters for flash loans
-    mapping(IAgToken => StablecoinData) public stablecoinMap;
-    /// @inheritdoc IFlashAngle
-    ICoreBorrow public core;
+    /// @notice Maps a token to the data and parameters for flash loans
+    mapping(address => tokenData) public tokenMap;
 
     // =============================== Event =======================================
 
-    event FlashLoan(address indexed stablecoin, uint256 amount, IERC3156FlashBorrower indexed receiver);
-    event FlashLoanParametersUpdated(IAgToken indexed stablecoin, uint64 _flashLoanFee, uint256 _maxBorrowable);
+    event FlashLoan(address token, uint256 amount, IERC3156FlashBorrower receiver);
+    event FlashLoanParametersUpdated(address token, uint64 _flashLoanFee, uint256 _maxBorrowable, bool _isActive);
+    event ActivetokenToggled(address token, bool _isActive);
 
     // =============================== Errors ======================================
 
     error InvalidReturnMessage();
-    error NotCore();
-    error NotGovernorOrGuardian();
-    error NotTreasury();
     error TooBigAmount();
     error TooHighParameterValue();
-    error UnsupportedStablecoin();
-    error ZeroAddress();
-
-    /// @notice Initializes the contract
-    /// @param _core Core address handling this module
-    function initialize(ICoreBorrow _core) public initializer {
-        if (address(_core) == address(0)) revert ZeroAddress();
-        core = _core;
-    }
+    error Unsupportedtoken();
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() initializer {}
 
-    // =================================== Modifiers ===============================
-
-    /// @notice Checks whether the sender is the core contract
-    modifier onlyCore() {
-        if (msg.sender != address(core)) revert NotCore();
-        _;
+    /// @notice Initializes the contract
+    /// @param _accessManager Access manager address
+    function initialize(address _accessManager, address _flashLoanFeeRecipient) public initializer {
+        if (address(_accessManager) == address(0)) revert CommonErrorsLib.AddressZero();
+        if (address(_flashLoanFeeRecipient) == address(0)) revert CommonErrorsLib.AddressZero();
+        __UUPSUpgradeable_init();
+        __ReentrancyGuardTransient_init();
+        __AccessManaged_init(_accessManager);
+        flashLoanFeeRecipient = _flashLoanFeeRecipient;
     }
 
-    /// @notice Checks whether a given stablecoin has been initialized in this contract
-    /// @param stablecoin Stablecoin to check
-    /// @dev To check whether a stablecoin has been initialized, we just need to check whether its associated
-    /// `treasury` address is not null in the `stablecoinMap`. This is what's checked in the `CoreBorrow` contract
-    /// when adding support for a stablecoin
-    modifier onlyExistingStablecoin(IAgToken stablecoin) {
-        if (stablecoinMap[stablecoin].treasury == address(0)) revert UnsupportedStablecoin();
+    // =================================== Modifiers ===============================
+
+    /// @notice Checks whether a given token has been initialized in this contract
+    /// @param token token to check
+    /// @dev To check whether a token has been initialized, we just need to check whether its associated
+    /// `treasury` address is not null in the `tokenMap`. This is what's checked in the `CoreBorrow` contract
+    /// when adding support for a token
+    modifier onlyActivetoken(address token) {
+        require(tokenMap[token].isActive, Unsupportedtoken());
         _;
     }
 
@@ -95,7 +97,7 @@ contract FlashAngle is IERC3156FlashLender, IFlashAngle, Initializable, Reentran
     /// @inheritdoc IERC3156FlashLender
     function maxFlashLoan(address token) external view returns (uint256) {
         // It will be 0 anyway if the token was not added
-        return stablecoinMap[IAgToken(token)].maxBorrowable;
+        return tokenMap[token].maxBorrowable;
     }
 
     /// @inheritdoc IERC3156FlashLender
@@ -104,17 +106,17 @@ contract FlashAngle is IERC3156FlashLender, IFlashAngle, Initializable, Reentran
         address token,
         uint256 amount,
         bytes calldata data
-    ) external nonReentrant returns (bool) {
+    ) external nonReentrant onlyActivetoken(token) returns (bool) {
         uint256 fee = _flashFee(token, amount);
-        if (amount > stablecoinMap[IAgToken(token)].maxBorrowable) revert TooBigAmount();
-        IAgToken(token).mint(address(receiver), amount);
+        if (amount > tokenMap[token].maxBorrowable) revert TooBigAmount();
+        ITokenP(token).mint(address(receiver), amount);
         if (receiver.onFlashLoan(msg.sender, token, amount, fee, data) != CALLBACK_SUCCESS)
             revert InvalidReturnMessage();
-        // Token must be an agToken here so normally no need to use `safeTransferFrom`, but out of safety
-        // and in case governance whitelists an agToken which does not have a correct implementation, we prefer
+        // Token must be an TokenP here so normally no need to use `safeTransferFrom`, but out of safety
+        // and in case governance whitelists an TokenP which does not have a correct implementation, we prefer
         // to use `safeTransferFrom` here
         IERC20(token).safeTransferFrom(address(receiver), address(this), amount + fee);
-        IAgToken(token).burnSelf(amount, address(this));
+        ITokenP(token).burnSelf(amount, address(this));
         emit FlashLoan(token, amount, receiver);
         return true;
     }
@@ -123,57 +125,52 @@ contract FlashAngle is IERC3156FlashLender, IFlashAngle, Initializable, Reentran
     /// @param token The loan currency
     /// @param amount The amount of tokens lent
     /// @dev This function will revert if the `token` requested is not whitelisted here
-    function _flashFee(
-        address token,
-        uint256 amount
-    ) internal view onlyExistingStablecoin(IAgToken(token)) returns (uint256) {
-        return (amount * stablecoinMap[IAgToken(token)].flashLoanFee) / BASE_PARAMS;
+    function _flashFee(address token, uint256 amount) internal view returns (uint256) {
+        return (amount * tokenMap[token].flashLoanFee) / BASE_PARAMS;
     }
 
     // ============================ Treasury Only Function =========================
 
-    /// @inheritdoc IFlashAngle
-    function accrueInterestToTreasury(IAgToken stablecoin) external returns (uint256 balance) {
-        address treasury = stablecoinMap[stablecoin].treasury;
-        if (msg.sender != treasury) revert NotTreasury();
-        balance = stablecoin.balanceOf(address(this));
-        IERC20(address(stablecoin)).safeTransfer(treasury, balance);
+    /// @notice Accrues interest to the fee recipient for a given list of tokens
+    /// @param tokens List of addresses of tokens to accrue interest for
+    /// @return balance Amount of interest accrued
+    function accrueInterestToFeeRecipient(address[] calldata tokens) external returns (uint256 balance) {
+        for (uint256 i = 0; i < tokens.length; i++) {
+            IERC20 token = IERC20(tokens[i]);
+            balance += token.balanceOf(address(this));
+            token.safeTransfer(flashLoanFeeRecipient, balance);
+        }
     }
 
     // =========================== Governance Only Function ========================
 
-    /// @notice Sets the parameters for a given stablecoin
-    /// @param stablecoin Stablecoin to change the parameters for
-    /// @param _flashLoanFee New flash loan fee for this stablecoin
+    /// @notice Sets the parameters for a given token
+    /// @param _token token to change the parameters for
+    /// @param _flashLoanFee New flash loan fee for this token
     /// @param _maxBorrowable Maximum amount that can be borrowed in a single flash loan
     /// @dev Setting a `maxBorrowable` parameter equal to 0 is a way to pause the functionality
-    /// @dev Parameters can only be modified for whitelisted stablecoins
+    /// @dev Parameters can only be modified for whitelisted tokens
     function setFlashLoanParameters(
-        IAgToken stablecoin,
+        address _token,
         uint64 _flashLoanFee,
-        uint256 _maxBorrowable
-    ) external onlyExistingStablecoin(stablecoin) {
-        if (!core.isGovernorOrGuardian(msg.sender)) revert NotGovernorOrGuardian();
+        uint256 _maxBorrowable,
+        bool _isActive
+    ) external restricted {
         if (_flashLoanFee > BASE_PARAMS) revert TooHighParameterValue();
-        stablecoinMap[stablecoin].flashLoanFee = _flashLoanFee;
-        stablecoinMap[stablecoin].maxBorrowable = _maxBorrowable;
-        emit FlashLoanParametersUpdated(stablecoin, _flashLoanFee, _maxBorrowable);
+        tokenMap[_token] = tokenData({
+            flashLoanFee: _flashLoanFee,
+            maxBorrowable: _maxBorrowable,
+            isActive: _isActive
+        });
+        emit FlashLoanParametersUpdated(_token, _flashLoanFee, _maxBorrowable, _isActive);
     }
 
-    // =========================== CoreBorrow Only Functions =======================
-
-    /// @inheritdoc IFlashAngle
-    function addStablecoinSupport(address _treasury) external onlyCore {
-        stablecoinMap[IAgToken(ITreasury(_treasury).stablecoin())].treasury = _treasury;
+    /// @notice Toggles the active status of a given token
+    /// @param _token token to toggle the active status for
+    function toggleActivetoken(address _token) external restricted {
+        tokenMap[_token].isActive = !tokenMap[_token].isActive;
+        emit ActivetokenToggled(_token, tokenMap[_token].isActive);
     }
 
-    /// @inheritdoc IFlashAngle
-    function removeStablecoinSupport(address _treasury) external onlyCore {
-        delete stablecoinMap[IAgToken(ITreasury(_treasury).stablecoin())];
-    }
-
-    /// @inheritdoc IFlashAngle
-    function setCore(address _core) external onlyCore {
-        core = ICoreBorrow(_core);
-    }
+    function _authorizeUpgrade(address newImplementation) internal virtual override restricted {}
 }
