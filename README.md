@@ -1,8 +1,6 @@
-# <img src=".github/assets/logo.svg" alt="Angle" height="40px"> Angle Tokens
+# Parallel Tokens
 
-[![CI](https://github.com/AngleProtocol/boilerplate/actions/workflows/ci.yml/badge.svg)](https://github.com/AngleProtocol/boilerplate/actions)
-
-This repository contains all the contracts of the Angle Tokens with associated contracts (CoreBorrow, FlashAngle ...)
+This repository contains all the contracts of Parallel Tokens with associated contract (flashloan)
 
 ## Starting
 
@@ -11,8 +9,7 @@ This repository contains all the contracts of the Angle Tokens with associated c
 You can install all dependencies by running
 
 ```bash
-yarn
-forge i
+bun install
 ```
 
 ### Create `.env` file
@@ -27,10 +24,6 @@ In order to interact with non local networks, you must create an `.env` that has
 For additional keys, you can check the `.env.example` file.
 
 Warning: always keep your confidential information safe.
-
-## Headers
-
-To automatically create headers, follow: <https://github.com/Picodes/headers>
 
 ## Hardhat Command line completion
 
@@ -69,97 +62,16 @@ docker pull ghcr.io/foundry-rs/foundry
 docker tag ghcr.io/foundry-rs/foundry:latest foundry:latest
 ```
 
-To run the container:
-
-```bash
-docker run -it --rm -v $(pwd):/app -w /app foundry sh
-```
-
-Then you are inside the container and can run Foundry’s commands.
-
 ### Tests
 
 You can run tests as follows:
 
 ```bash
-forge test -vvvv --watch
-forge test -vvvv --match-path contracts/forge-tests/KeeperMulticall.t.sol
-forge test -vvvv --match-test "testAbc*"
-forge test -vvvv --fork-url https://eth-mainnet.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf
-```
-
-You can also list tests:
-
-```bash
-forge test --list
-forge test --list --json --match-test "testXXX*"
-```
-
-### Deploying
-
-There is an example script in the `scripts/foundry` folder. Then you can run:
-
-```bash
-yarn foundry:deploy <FILE_NAME> --rpc-url <NETWORK_NAME>
-```
-
-Example:
-
-```bash
-yarn foundry:deploy scripts/foundry/DeployMockAgEUR.s.sol --rpc-url goerli
-```
-
-### Coverage
-
-We recommend the use of this [vscode extension](ryanluker.vscode-coverage-gutters).
-
-```bash
-yarn hardhat:coverage
-yarn foundry:coverage
-```
-
-### Simulate
-
-You can simulate your transaction live or in fork mode. For both option you need to
-complete the `scripts/foundry/Simulate.s.sol` with your values: address sending the tx,
-address caled and the data to give to this address call.
-
-For live simulation
-
-```bash
-yarn foundry:simulate
-```
-
-For fork simulation
-
-```bash
-yarn foundry:fork
-yarn foundry:simulate:fork
-```
-
-For fork simulation at a given block
-
-```bash
-yarn foundry:fork:block ${XXXX}
-yarn foundry:simulate:fork
+bun run test
 ```
 
 ### Gas report
 
 ```bash
-yarn foundry:gas
+bun run gas
 ```
-
-## Slither
-
-```bash
-pip3 install slither-analyzer
-pip3 install solc-select
-solc-select install 0.8.11
-solc-select use 0.8.11
-slither .
-```
-
-## Media
-
-Don't hesitate to reach out on [Twitter](https://twitter.com/AngleProtocol) 🐦
