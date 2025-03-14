@@ -33,16 +33,16 @@ abstract contract Base_Test is Test, Deploys, Assertions, Defaults, Utils {
         aEURp = _deployTokenP("aEURp", "aEURp");
         vm.startPrank(users.admin.addr);
         accessManager.setTargetFunctionRole(address(aEURp), getGovernorTokenPSelectorAccess(), GOVERNOR_ROLE);
-        vm.startPrank(users.dao.addr);
-        accessManager.execute(address(aEURp), abi.encodeWithSelector(TokenP.addMinter.selector, address(users.dao.addr)));
+        accessManager.setTargetFunctionRole(address(aEURp), getMinterTokenPSelectorAccess(), MINTER_ROLE_aEURp);
+        accessManager.grantRole(MINTER_ROLE_aEURp, users.admin.addr,0);
 
 
         // Deploy EURp token contract for chain B
         bEURp = _deployTokenP("bEURp", "bEURp");
         vm.startPrank(users.admin.addr);
         accessManager.setTargetFunctionRole(address(bEURp), getGovernorTokenPSelectorAccess(), GOVERNOR_ROLE);
-        vm.startPrank(users.dao.addr);
-        accessManager.execute(address(bEURp), abi.encodeWithSelector(TokenP.addMinter.selector, address(users.dao.addr)));
+        accessManager.setTargetFunctionRole(address(bEURp), getMinterTokenPSelectorAccess(), MINTER_ROLE_bEURp);
+        accessManager.grantRole(MINTER_ROLE_bEURp, users.admin.addr,0);
         vm.stopPrank();
     }
 

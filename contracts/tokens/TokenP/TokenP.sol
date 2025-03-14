@@ -19,15 +19,12 @@ import {TokenP_ErrorsLib as ErrorsLib} from "./ErrorsLib.sol";
 /// @notice Base contract for Parallel Tokens (TokenP)
 /// @dev By default, TokenP are ERC-20 tokens with 18 decimals
 contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UUPSUpgradeable {
-    //-------------------------------------------
+     //-------------------------------------------
     // Storage
     //-------------------------------------------
 
-    /// @notice Mapping of addresses that are allowed to mint
-    mapping(address => bool) public isMinter;
-
     /// @notice Gap for future upgrades
-    uint256[48] private __gap;
+    uint256[50] private __gap;
 
     //-------------------------------------------
     // Constructor
@@ -46,16 +43,6 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     }
 
     //-------------------------------------------
-    // Modifiers
-    //-------------------------------------------
-
-    /// @notice Checks whether the sender has the minting right
-    modifier onlyMinter() {
-        if (!isMinter[msg.sender]) revert ErrorsLib.NotMinter();
-        _;
-    }
-
-    //-------------------------------------------
     // External functions
     //-------------------------------------------
 
@@ -71,12 +58,12 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     //-------------------------------------------
 
     /// @inheritdoc ITokenP
-    function burnSelf(uint256 amount, address burner) external onlyMinter {
+    function burnSelf(uint256 amount, address burner) external restricted {
         _burn(burner, amount);
     }
 
     /// @inheritdoc ITokenP
-    function burnFrom(uint256 amount, address burner, address sender) external onlyMinter {
+    function burnFrom(uint256 amount, address burner, address sender) external restricted {
         if (burner != sender) {
             uint256 currentAllowance = allowance(burner, sender);
             if (currentAllowance < amount) revert ErrorsLib.BurnAmountExceedsAllowance();
@@ -86,7 +73,7 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     }
 
     /// @inheritdoc ITokenP
-    function mint(address account, uint256 amount) external onlyMinter {
+    function mint(address account, uint256 amount) external restricted {
         _mint(account, amount);
     }
 
@@ -94,17 +81,6 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     // Restricted functions
     //-------------------------------------------
 
-    /// @inheritdoc ITokenP
-    function addMinter(address minter) external restricted {
-        isMinter[minter] = true;
-        emit EventsLib.MinterToggled(minter);
-    }
-
-    /// @inheritdoc ITokenP
-    function removeMinter(address minter) external restricted {
-        isMinter[minter] = false;
-        emit EventsLib.MinterToggled(minter);
-    }
 
     /// @inheritdoc UUPSUpgradeable
     function _authorizeUpgrade(address newImplementation) internal virtual override restricted {}
@@ -117,5 +93,4 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     function nonces(address owner) public view virtual override(ERC20PermitUpgradeable, IERC20Permit) returns (uint256) {
         return super.nonces(owner);
     }
-
 }

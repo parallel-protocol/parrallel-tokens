@@ -8,13 +8,19 @@ import { OAppCore } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppCore.
 
 import { TokenP } from "contracts/tokens/TokenP/TokenP.sol";
 import { BridgeableTokenP } from "contracts/tokens/BridgeableTokenP/BridgeableTokenP.sol";
-
+import { FlashParallelToken } from "contracts/flashloan/FlashParallelToken.sol";
 contract AccessManagerSelectors {
     function getGovernorTokenPSelectorAccess() internal pure returns (bytes4[] memory) {
         bytes4[] memory selectors = new bytes4[](3);
-        selectors[0] = TokenP.addMinter.selector;
-        selectors[1] = TokenP.removeMinter.selector;
         selectors[2] = UUPSUpgradeable.upgradeToAndCall.selector;
+        return selectors;
+    }
+
+    function getMinterTokenPSelectorAccess() internal pure returns (bytes4[] memory) {
+        bytes4[] memory selectors = new bytes4[](3);
+        selectors[0] = TokenP.mint.selector;
+        selectors[1] = TokenP.burnFrom.selector;
+        selectors[2] = TokenP.burnSelf.selector;
         return selectors;
     }
 
@@ -44,5 +50,13 @@ contract AccessManagerSelectors {
         selectors[9] = BridgeableTokenP.setFeesRecipient.selector;
         return selectors;
     }
-    
+
+    function getGovernorFlashParallelTokenSelectorAccess() internal pure returns (bytes4[] memory) {
+        bytes4[] memory selectors = new bytes4[](4);
+        selectors[0] = FlashParallelToken.setFlashLoanParameters.selector;
+        selectors[1] = FlashParallelToken.toggleActiveToken.selector;
+        selectors[2] = FlashParallelToken.setFlashLoanFeeRecipient.selector;    
+        selectors[3] = UUPSUpgradeable.upgradeToAndCall.selector;
+        return selectors;
+    }
 }

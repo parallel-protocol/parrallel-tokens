@@ -32,7 +32,13 @@ abstract contract Units_Test is Base_Test {
         vm.startPrank(users.admin.addr);
         accessManager.setTargetFunctionRole(address(aBridgeableTokenp), getGovernorBridgeableTokenPSelectorAccess(), GOVERNOR_ROLE);
         accessManager.setTargetFunctionRole(address(aBridgeableTokenp), getGuardianBridgeableTokenPSelectorAccess(), GUARDIAN_ROLE);
+        accessManager.grantRole(MINTER_ROLE_aEURp, address(aBridgeableTokenp),0);
         vm.stopPrank();
 
+        _deployFlashParallelToken(address(accessManager), users.feesRecipient.addr);
+        vm.startPrank(users.admin.addr);
+        accessManager.setTargetFunctionRole(address(flashParallelToken), getGovernorFlashParallelTokenSelectorAccess(), GOVERNOR_ROLE);
+        accessManager.grantRole(MINTER_ROLE_aEURp, address(flashParallelToken),0);
+        vm.stopPrank();
     }
 }

@@ -18,6 +18,10 @@ import { TokenP_ErrorsLib } from "contracts/tokens/TokenP/ErrorsLib.sol";
 import { TokenP_EventsLib } from "contracts/tokens/TokenP/EventsLib.sol";
 import { TokenP } from "contracts/tokens/TokenP/TokenP.sol";
 
+import { FlashLoan_ErrorsLib } from "contracts/flashloan/ErrorsLib.sol";
+import { FlashLoan_EventsLib } from "contracts/flashloan/EventsLib.sol";
+import { FlashParallelToken } from "contracts/flashloan/FlashParallelToken.sol";
+
 import "./Constants.sol";
 import "./AccessManagerSelectors.sol";
 
@@ -31,6 +35,7 @@ abstract contract Deploys is TestHelperOz5, AccessManagerSelectors {
     TokenP bEURp;
     BridgeableTokenP aBridgeableTokenp;
     BridgeableTokenP bBridgeableTokenp;
+    FlashParallelToken flashParallelToken;
 
 
     function _deployAccessManager(address _initialAdmin, address _governor, address _guardian) internal {
@@ -49,6 +54,12 @@ abstract contract Deploys is TestHelperOz5, AccessManagerSelectors {
         TokenP tokenP = TokenP(address(new ERC1967Proxy(address(tokenPImpl), abi.encodeWithSelector(TokenP.initialize.selector, name, symbol, address(accessManager)))));
         vm.label({ account: address(tokenP), newLabel: name });
         return tokenP;
+    }
+
+    function _deployFlashParallelToken(address _accessManager, address _flashLoanFeeRecipient) internal {
+        FlashParallelToken flashParallelTokenImpl = new FlashParallelToken();
+        flashParallelToken = FlashParallelToken(address(new ERC1967Proxy(address(flashParallelTokenImpl), abi.encodeWithSelector(FlashParallelToken.initialize.selector, _accessManager, _flashLoanFeeRecipient))));
+        vm.label({ account: address(flashParallelToken), newLabel: "FlashParallelToken" });
     }
 
     function _deployBridgeableTokenP(

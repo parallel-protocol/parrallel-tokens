@@ -129,7 +129,7 @@ contract BridgeableTokenpP_LzReceive_Integrations_Test is Integrations_Test {
 
     modifier reachGlobalLimitWithNegativeCreditDebitBalance() {
         uint256 amountToBridge = 10e18;
-        vm.startPrank(users.dao.addr);
+        vm.startPrank(users.admin.addr);
         bEURp.mint(users.alice.addr, amountToBridge);
 
         vm.startPrank(users.guardian.addr);
@@ -144,7 +144,7 @@ contract BridgeableTokenpP_LzReceive_Integrations_Test is Integrations_Test {
         _;
     }
 
-    function test_NotRevertWhen_CreditDebitLimitNegativeAndGlobalCreditAmountIsExceededDuringTx()
+    function test_LzReceive_NotRevertWhen_CreditDebitLimitNegativeAndGlobalCreditAmountIsExceededDuringTx()
         external
         reachGlobalLimitWithNegativeCreditDebitBalance
     {

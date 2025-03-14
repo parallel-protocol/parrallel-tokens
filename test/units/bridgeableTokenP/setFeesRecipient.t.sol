@@ -6,7 +6,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import "test/Units.t.sol";
 
 contract BridgeableToken_SetFeesRecipient_Units_Test is Units_Test {
-    address newFeesRecipient = vm.addr(100);
+    address newFeesRecipient = makeAddr("New Fees Recipient");
 
     function test_SetFeesRecipient() external {
         vm.startPrank(users.guardian.addr);

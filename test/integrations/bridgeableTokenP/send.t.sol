@@ -14,7 +14,9 @@ contract BridgeableTokenpP_Send_Integrations_Test is Integrations_Test {
     function setUp() public override {
         super.setUp();
 
-        vm.startPrank(users.dao.addr);
+        vm.startPrank(users.admin.addr);
+        accessManager.grantRole(MINTER_ROLE_aEURp, address(aBridgeableTokenp),0);
+        accessManager.grantRole(MINTER_ROLE_bEURp, address(bBridgeableTokenp),0);
         aEURp.mint(address(users.alice.addr), INITIAL_BALANCE);
         bEURp.mint(address(users.alice.addr), INITIAL_BALANCE);
         vm.stopPrank();

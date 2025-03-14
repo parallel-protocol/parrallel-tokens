@@ -48,7 +48,9 @@ contract BridgeableTokenPP_Invariants_Test is Invariants_Test {
             })
         );
 
-        vm.startPrank(users.dao.addr);
+        vm.startPrank(users.admin.addr);
+        accessManager.grantRole(MINTER_ROLE_aEURp, address(aBridgeableTokenp),0);
+        accessManager.grantRole(MINTER_ROLE_bEURp, address(bBridgeableTokenp),0);
         aEURp.mint(address(users.alice.addr), INITIAL_BALANCE);
         bEURp.mint(address(users.alice.addr), INITIAL_BALANCE);
         aEURp.mint(address(users.bob.addr), INITIAL_BALANCE);

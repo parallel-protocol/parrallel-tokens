@@ -16,7 +16,8 @@ contract BridgeableTokenpP_SwapLzTokenToPrincipalToken_Integrations_Test is Inte
         accessManager.execute(address(bBridgeableTokenp), abi.encodeWithSelector(BridgeableTokenP.setDailyCreditLimit.selector, 0));
 
         bLzEURpAmount = _serializeAmountForOFT(DEFAULT_DAILY_DEBIT_LIMIT);
-        vm.startPrank(users.dao.addr);
+        vm.startPrank(users.admin.addr);
+        accessManager.grantRole(MINTER_ROLE_aEURp, address(aBridgeableTokenp),0);
         aEURp.mint(address(users.alice.addr), bLzEURpAmount);
 
         /// @dev recieve bLz-EURp

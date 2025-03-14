@@ -10,9 +10,6 @@ import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC2
 /// @notice Interface for the stablecoins `TokenP` contracts
 /// @dev This interface only contains functions of the `TokenP` contract which are called by other contracts.
 interface ITokenP is IERC20, IERC20Permit {
-
-    // ======================= Minter Role Only Functions ===========================
-
     /// @notice Allow whitelisted contract to mint TokenP
     /// @param account Address to mint to
     /// @param amount Amount to mint
@@ -41,25 +38,5 @@ interface ITokenP is IERC20, IERC20Permit {
     /// @param amount Amount of stablecoins to burn
     /// @dev This function can typically be called if there is a settlement mechanism to burn stablecoins
     function burnStablecoin(uint256 amount) external;
-
-    // ========================= Restricted Only Functions ===========================
-
-    /// @notice Adds a minter in the contract
-    /// @param minter Minter address to add
-    /// @dev Zero address checks are performed directly in the `Treasury` contract
-    function addMinter(address minter) external;
-
-    /// @notice Removes a minter from the contract
-    /// @param minter Minter address to remove
-    /// @dev This function can also be called by a minter wishing to revoke itself
-    function removeMinter(address minter) external;
-
-
-    // ========================= External functions ================================
-
-    /// @notice Checks whether an address has the right to mint agTokens
-    /// @param minter Address for which the minting right should be checked
-    /// @return Whether the address has the right to mint agTokens or not
-    function isMinter(address minter) external view returns (bool);
 
 }

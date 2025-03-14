@@ -15,8 +15,13 @@ abstract contract Integrations_Test is Base_Test {
 
     function setUp() public virtual override {
         Base_Test.setUp();
-
         setUpEndpoints(2, LibraryType.UltraLightNode);
+
+        _deployFlashParallelToken(address(accessManager), users.feesRecipient.addr);
+        vm.startPrank(users.admin.addr);
+        accessManager.setTargetFunctionRole(address(flashParallelToken), getGovernorFlashParallelTokenSelectorAccess(), GOVERNOR_ROLE);
+        accessManager.grantRole(MINTER_ROLE_aEURp, address(flashParallelToken),0);
+        vm.stopPrank();
 
         defaultConfigParams = BridgeableTokenP.ConfigParams({
             dailyCreditLimit: DEFAULT_DAILY_CREDIT_LIMIT,
@@ -47,11 +52,9 @@ abstract contract Integrations_Test is Base_Test {
             defaultConfigParams
         );
 
-        vm.startPrank(users.dao.addr);
-        aEURp.addMinter(address(aBridgeableTokenp));
-        bEURp.addMinter(address(bBridgeableTokenp));
-
         vm.startPrank(users.admin.addr);
+        accessManager.grantRole(MINTER_ROLE_aEURp, address(aBridgeableTokenp),0);
+        accessManager.grantRole(MINTER_ROLE_bEURp, address(bBridgeableTokenp),0);
         accessManager.setTargetFunctionRole(address(aBridgeableTokenp), getGovernorBridgeableTokenPSelectorAccess(), GOVERNOR_ROLE);
         accessManager.setTargetFunctionRole(address(aBridgeableTokenp), getGuardianBridgeableTokenPSelectorAccess(), GUARDIAN_ROLE);
         accessManager.setTargetFunctionRole(address(bBridgeableTokenp), getGovernorBridgeableTokenPSelectorAccess(), GOVERNOR_ROLE);
@@ -72,6 +75,8 @@ abstract contract Integrations_Test is Base_Test {
         vm.startPrank(users.alice.addr);
         aEURp.approve(address(aBridgeableTokenp), INITIAL_BALANCE);
         bEURp.approve(address(bBridgeableTokenp), INITIAL_BALANCE);
+
+  
 
     }
 
