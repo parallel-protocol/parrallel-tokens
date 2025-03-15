@@ -1,6 +1,5 @@
-// SPDX-License-Identifier: GPL-3.0
-
-pragma solidity ^0.8.7;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.28;
 
 import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
 import {IERC3156FlashLender} from "@openzeppelin/contracts/interfaces/IERC3156FlashLender.sol";

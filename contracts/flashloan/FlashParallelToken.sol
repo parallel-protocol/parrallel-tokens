@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -15,8 +15,6 @@ import {PercentageMathLib} from "../libraries/PercentageMathLib.sol";
 
 import {FlashLoan_EventsLib as EventsLib} from "./EventsLib.sol";
 import {FlashLoan_ErrorsLib as ErrorsLib} from "./ErrorsLib.sol";
-
-import {console2} from "@forge-std/console2.sol";
 
 /// @title FlashParallelToken
 /// @author Cooper Labs

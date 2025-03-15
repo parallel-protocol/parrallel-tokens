@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
