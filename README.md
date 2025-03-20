@@ -1,100 +1,77 @@
 # Parallel Tokens
 
-## What is it?
+## Summary
 
 This repository contains all the contracts of Parallel Tokens with associated contract.
 
 ## Architecture
 
-- the [TokenP](./contracts/tokens/TokenP/TokenP.sol) is the stablecoin contract
-- the [BridgeableTokenP](./contracts/tokens/BridgeableTokenP/BridgeableTokenP.sol) is an OFT (layerZero standard) contract that unlock the power of TokenP to be bridgeable between specific chains.
-- the [FlashParallelToken](./contracts/flashloan/FlashParallelToken.sol) is the flashloan contract on top of TokenP.
+- [TokenP](./contracts/tokens/TokenP/TokenP.sol) contract is the ERC20 stablecoin.
+- [BridgeableTokenP](./contracts/tokens/BridgeableTokenP/BridgeableTokenP.sol) is an OFT (layerZero standard) contract that unlock the power of TokenP to be bridgeable between specific chains.
+- [FlashParallelToken](./contracts/flashloan/FlashParallelToken.sol) is the flashloan contract on top of TokenP's contracts.
 
 ## Documentation Links
 
+## Deployment Addresses
+
 ## Security
 
-### Trust assumptions of the Parallelizer system
+### Assumptions
 
-- BridgeableTokenP owner will be an accessManager contract.
+- Every restricted access is managed by an [AccessManager](https://github.com/parallel-protocol/parallel-core/blob/main/contracts/access/AccessManager.sol) contract following the OpenZeppelin standard
+- The owner of [BridgeableTokenP](./contracts/tokens/BridgeableTokenP/BridgeableTokenP.sol) will be the AccessManager contract or a multisig.
 
 ### Known Issues
 
-- When updating the FlashloanFeeRecipient current fees are not sent to the current recipient before update (to prevent that this function will be callable with a timelock role access managed on the accessManager).
+- When updating the FlashloanFeeRecipient current fees are not sent to the current recipient before update (to prevent that this function could be restricted with a timelock role on the AccessManager).
+
+### Audits
 
 ## Development
 
-### Install packages
+### Foundry
 
-You can install all dependencies by running
+[Install foundry follow the instructions.](https://book.getfoundry.sh/getting-started/installation)
+
+### Install js dependencies
 
 ```bash
 bun install
 ```
 
-### Create `.env` file
+### Setup `.env` file
 
 In order to interact with non local networks, you must create an `.env` that has:
 
-- `PRIVATE_KEY`
-- `MNEMONIC`
-- network key (eg. `ALCHEMY_NETWORK_KEY`)
-- `ETHERSCAN_API_KEY`
+```bash
+PRIVATE_KEY="PRIVATE_KEY"
+ALCHEMY_API_KEY="ALCHEMY_API_KEY"
+MAINNET_ETHERSCAN_API_KEY="MAINNET_ETHERSCAN_API_KEY"
+```
 
 For additional keys, you can check the `.env.example` file.
 
-Warning: always keep your confidential information safe.
+**Warning: always keep your confidential information safe**
 
-## Hardhat Command line completion
-
-Follow these instructions to have hardhat command line arguments completion: <https://hardhat.org/hardhat-runner/docs/guides/command-line-completion>
-
-## Foundry Installation
+### Compile contracts
 
 ```bash
-curl -L https://foundry.paradigm.xyz | bash
-
-source /root/.zshrc
-# or, if you're under bash: source /root/.bashrc
-
-foundryup
+bun run compile
 ```
 
-To install the standard library:
-
-```bash
-forge install foundry-rs/forge-std
-```
-
-To update libraries:
-
-```bash
-forge update
-```
-
-### Foundry on Docker 🐳
-
-**If you don’t want to install Rust and Foundry on your computer, you can use Docker**
-Image is available here [ghcr.io/foundry-rs/foundry](http://ghcr.io/foundry-rs/foundry).
-
-```bash
-docker pull ghcr.io/foundry-rs/foundry
-docker tag ghcr.io/foundry-rs/foundry:latest foundry:latest
-```
-
-### Tests
-
-You can run tests as follows:
+### Run tests
 
 ```bash
 bun run test
 ```
 
-### Gas report
+### [Slither](https://github.com/crytic/slither)
 
 ```bash
-bun run gas
+bun run slither
 ```
+
+You will find other useful commands in the [package.json](./package.json) file.
 
 ## Contributing
 
@@ -103,11 +80,14 @@ If you're interested in contributing, please see our [contributions guidelines](
 ## Questions & Feedback
 
 For any question or feedback you can use [discord](https://discord.com/invite/mimodao). Don't hesitate to reach out on
-[Twitter](https://twitter.com/mimo_labs)🐦 as well.
+[Twitter](https://twitter.com/mimo_labs) as well.
 
 ## Licensing
 
 The primary license for this repository is the MIT license. See [`LICENSE`](./LICENSE).
 Minus the following exceptions:
+
+- tests files are under UNLICENSED license
+- mocks contracts are under UNLICENSED license
 
 Each of these files states their license type.
