@@ -3,9 +3,9 @@
 pragma solidity 0.8.28;
 
 import {ReentrancyGuardTransientUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardTransientUpgradeable.sol";
-import "test/Integrations.t.sol";
+import "tests/Integrations.t.sol";
 
-import "test/mock/FlashLoanReceiverMock.sol";
+import "tests/mock/FlashLoanReceiverMock.sol";
 
 contract FlashParallelToken_FlashLoan_Integrations_Test is Integrations_Test {
     FlashLoanReceiverMock flashLoanReceiverMock;

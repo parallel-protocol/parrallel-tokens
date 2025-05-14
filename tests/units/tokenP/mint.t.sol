@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
-import "test/Units.t.sol";
+import "tests/Units.t.sol";
 
 contract TokenP_Mint_Units_Test is Units_Test {
 

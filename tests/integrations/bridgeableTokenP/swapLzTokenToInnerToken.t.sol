@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
-import "test/Integrations.t.sol";
+import "tests/Integrations.t.sol";
 
 contract BridgeableTokenpP_SwapLzTokenToPrincipalToken_Integrations_Test is Integrations_Test {
     using OptionsBuilder for bytes;

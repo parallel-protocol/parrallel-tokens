@@ -3,8 +3,8 @@ pragma solidity 0.8.28;
 
 import { IAccessManaged } from "@openzeppelin/contracts/access/manager/IAccessManaged.sol";
 
-import { FlashParallelTokenMockV2 } from "test/mock/FlashParallelTokenMockV2.sol";
-import "test/Units.t.sol";
+import { FlashParallelTokenMockV2 } from "tests/mock/FlashParallelTokenMockV2.sol";
+import "tests/Units.t.sol";
 
 contract FlashParallelToken_SetFlashLoanParameters_Units_Test is Units_Test {
     uint256 maxBorrowable = 1e18;

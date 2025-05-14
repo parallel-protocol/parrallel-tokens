@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
-import "test/Integrations.t.sol";
+import "tests/Integrations.t.sol";
 
 
 contract FlashParallelToken_AccrueInterestToFeeRecipient_Integrations_Test is Integrations_Test {

@@ -3,7 +3,7 @@ pragma solidity 0.8.28;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-import "test/Units.t.sol";
+import "tests/Units.t.sol";
 
 contract BridgeableToken_SetDailyDebitLimit_Units_Test is Units_Test {
     uint256 newDailyDebitLimit = 100_000e18;

@@ -4,8 +4,8 @@ pragma solidity 0.8.28;
 
 import { IAccessManaged } from "@openzeppelin/contracts/access/manager/IAccessManaged.sol";
 
-import { TokenPMockV2 } from "test/mock/TokenPMockV2.sol";
-import "test/Units.t.sol";
+import { TokenPMockV2 } from "tests/mock/TokenPMockV2.sol";
+import "tests/Units.t.sol";
 
 contract TokenP_UpgradeAndCall_Units_Test is Units_Test {
     TokenPMockV2 newTokenP = new TokenPMockV2();

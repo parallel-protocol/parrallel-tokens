@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
-import "test/Base.t.sol";
+import "tests/Base.t.sol";
 
 import { MathLib } from "contracts/libraries/MathLib.sol";
 

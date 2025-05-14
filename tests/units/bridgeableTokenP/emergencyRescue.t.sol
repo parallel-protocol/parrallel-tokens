@@ -4,7 +4,7 @@ pragma solidity 0.8.28;
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-import "test/Units.t.sol";
+import "tests/Units.t.sol";
 
 contract BridgeableToken_EmergencyRescue_Units_Test is Units_Test {
     function setUp() public virtual override {

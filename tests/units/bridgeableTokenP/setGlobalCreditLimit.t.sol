@@ -3,7 +3,7 @@ pragma solidity 0.8.28;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-import "test/Units.t.sol";
+import "tests/Units.t.sol";
 
 contract BridgeableToken_SetGlobalCreditLimit_Units_Test is Units_Test {
     uint256 newGlobalCreditLimit = 100_000_000e18;

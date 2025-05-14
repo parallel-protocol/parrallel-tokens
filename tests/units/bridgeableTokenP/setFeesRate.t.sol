@@ -3,7 +3,7 @@ pragma solidity 0.8.28;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-import "test/Units.t.sol";
+import "tests/Units.t.sol";
 
 contract BridgeableToken_SetFeesRate_Units_Test is Units_Test {
     function test_SetFeesRate() external {

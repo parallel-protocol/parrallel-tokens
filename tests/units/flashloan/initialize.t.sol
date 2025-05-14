@@ -3,7 +3,7 @@ pragma solidity 0.8.28;
 
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-import "test/Units.t.sol";
+import "tests/Units.t.sol";
 
 contract FlashParallelToken_Initialize_Units_Test is Units_Test {
 

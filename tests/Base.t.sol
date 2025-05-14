@@ -9,7 +9,7 @@ import "contracts/libraries/Constants.sol" as ContractConstantsLib;
 import "./helpers/Deploys.sol";
 import "./helpers/Defaults.sol";
 import "./helpers/Assertions.sol";
-import "./helpers/utils.sol";
+import "./helpers/Utils.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
 abstract contract Base_Test is Test, Deploys, Assertions, Defaults, Utils {

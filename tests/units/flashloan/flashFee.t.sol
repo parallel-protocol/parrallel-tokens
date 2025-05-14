@@ -3,8 +3,8 @@ pragma solidity 0.8.28;
 
 import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 
-import { FlashParallelTokenMockV2 } from "test/mock/FlashParallelTokenMockV2.sol";
-import "test/Units.t.sol";
+import { FlashParallelTokenMockV2 } from "tests/mock/FlashParallelTokenMockV2.sol";
+import "tests/Units.t.sol";
 
 contract FlashParallelToken_FlashFee_Units_Test is Units_Test {
 

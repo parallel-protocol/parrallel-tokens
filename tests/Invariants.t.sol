@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
-import "test/Integrations.t.sol";
+import "tests/Integrations.t.sol";
 
 /// @notice Common logic needed by all invariants tests, both concrete and fuzz tests.
 abstract contract Invariants_Test is Integrations_Test {
