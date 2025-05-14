@@ -1,7 +1,7 @@
 [profile.default]
 src = "contracts"
 out = "out"
-test = "test"
+test = "tests"
 libs = ["lib"]
 script = "scripts"
 cache_path = "cache-forge"
