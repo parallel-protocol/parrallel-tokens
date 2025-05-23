@@ -96,7 +96,7 @@ contract FlashParallelToken is
     /// @inheritdoc IERC3156FlashLender
     function maxFlashLoan(address token) external view returns (uint256) {
         // It will be 0 anyway if the token was not added
-        return tokenMap[token].maxBorrowable;
+        return tokenMap[token].isActive ? tokenMap[token].maxBorrowable: 0;
     }
 
     /// @inheritdoc IERC3156FlashLender
