@@ -13,6 +13,7 @@ import { OFT } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol";
 import { OFTMsgCodec } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/libs/OFTMsgCodec.sol";
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import { ITokenP } from "contracts/interfaces/ITokenP.sol";
@@ -38,6 +39,18 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
     //-------------------------------------------
     // Storage
     //-------------------------------------------
+    
+    /// @notice Permit calldata struct
+    struct PermitCalldata {
+        /// @notice The deadline of the permit.
+        uint256 deadline;
+        /// @notice The v value of the permit.
+        uint8 v;
+        /// @notice The r value of the permit.
+        bytes32 r;
+        /// @notice The s value of the permit.
+        bytes32 s;
+    }
 
     /// @notice Struct to initialize the contract
     struct ConfigParams {
@@ -143,35 +156,46 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
         whenNotPaused
         returns (MessagingReceipt memory msgReceipt, OFTReceipt memory oftReceipt)
     {
-        if (_sendParam.composeMsg.length != 32) revert ErrorsLib.InvalidMsgLength();
-        address to = _sendParam.to.bytes32ToAddress();
-        if (to == address(0)) revert CommonErrorsLib.AddressZero();
-        
-        bool isPrincipalTokenSent = abi.decode(_sendParam.composeMsg, (bool));
-
-        (uint256 amountSent, uint256 amountReceived) = _debit(
-            isPrincipalTokenSent,
-            _sendParam.amountLD,
-            _sendParam.minAmountLD,
-            _sendParam.dstEid
+        return _send(
+            _sendParam,
+            _fee,
+            _refundAddress
         );
+    }
 
-        // @dev Builds the options and OFT message to quote in the endpoint.
-        (bytes memory message, bytes memory options) = _buildMsgAndOptions(_sendParam, amountReceived);
-        // @dev Sends the message to the LayerZero endpoint and returns the LayerZero msg receipt.
-        msgReceipt = _lzSend(_sendParam.dstEid, message, options, _fee, _refundAddress);
-        // @dev Formulate the OFT receipt.
-        oftReceipt = OFTReceipt(amountSent, amountReceived);
-
-        emit EventsLib.BridgeableTokenSent(
-            msgReceipt.guid,
-            _sendParam.dstEid,
-            msg.sender,
-            _sendParam.to.bytes32ToAddress(),
-            _fee.nativeFee,
-            isPrincipalTokenSent,
-            amountSent,
-            amountReceived
+    /// @notice Executes the send operation using permit.
+    /// @param _sendParam The parameters for the send operation.
+    /// @param _fee The calculated fees for the send() operation.
+    ///      - nativeFee: The native fees.
+    ///      - lzTokenFee: The lzToken fees.
+    /// @param _permit The permit calldata.
+    /// @param _refundAddress The address to receive any excess funds.
+    /// @return msgReceipt The receipt for the send operation.
+    /// @return oftReceipt The OFT receipt information.
+    ///
+    /// @dev MessagingReceipt: LayerZero msg receipt
+    ///  - guid: The unique identifier for the sent message.
+    ///  - nonce: The nonce of the sent message.
+    ///  - fees: The LayerZero fees incurred for the message.
+    function sendWithPermit(
+        SendParam calldata _sendParam,
+        MessagingFee calldata _fee,
+        PermitCalldata calldata _permit,
+        address _refundAddress
+    )
+        external
+        payable
+        nonReentrant
+        whenNotPaused
+        returns (MessagingReceipt memory msgReceipt, OFTReceipt memory oftReceipt)
+    {
+        // @dev using try catch to avoid reverting the transaction in case of front-running
+        try IERC20Permit(address(principalToken)).permit(msg.sender, address(this), _sendParam.amountLD, _permit.deadline, _permit.v, _permit.r, _permit.s) { }
+            catch { }
+        return _send(
+            _sendParam,
+            _fee,
+            _refundAddress
         );
     }
 
@@ -413,6 +437,56 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
     //-------------------------------------------
     // Private functions
     //-------------------------------------------
+
+    /// @dev Excute the send operation for both send and sendWithPermit
+    /// @param _sendParam The parameters for the send operation.
+    /// @param _fee The calculated fees for the send() operation.
+    ///      - nativeFee: The native fees.
+    ///      - lzTokenFee: The lzToken fees.
+    /// @param _refundAddress The address to receive any excess funds.
+    /// @return msgReceipt The receipt for the send operation.
+    /// @return oftReceipt The OFT receipt information.
+    ///
+    /// @dev MessagingReceipt: LayerZero msg receipt
+    ///  - guid: The unique identifier for the sent message.
+    ///  - nonce: The nonce of the sent message.
+    ///  - fees: The LayerZero fees incurred for the message.
+    function _send(
+        SendParam calldata _sendParam,
+        MessagingFee calldata _fee,
+        address _refundAddress
+    ) private returns (MessagingReceipt memory msgReceipt, OFTReceipt memory oftReceipt) {
+        if (_sendParam.composeMsg.length != 32) revert ErrorsLib.InvalidMsgLength();
+        address to = _sendParam.to.bytes32ToAddress();
+        if (to == address(0)) revert CommonErrorsLib.AddressZero();
+        
+        bool isPrincipalTokenSent = abi.decode(_sendParam.composeMsg, (bool));
+
+        (uint256 amountSent, uint256 amountReceived) = _debit(
+            isPrincipalTokenSent,
+            _sendParam.amountLD,
+            _sendParam.minAmountLD,
+            _sendParam.dstEid
+        );
+
+        // @dev Builds the options and OFT message to quote in the endpoint.
+        (bytes memory message, bytes memory options) = _buildMsgAndOptions(_sendParam, amountReceived);
+        // @dev Sends the message to the LayerZero endpoint and returns the LayerZero msg receipt.
+        msgReceipt = _lzSend(_sendParam.dstEid, message, options, _fee, _refundAddress);
+        // @dev Formulate the OFT receipt.
+        oftReceipt = OFTReceipt(amountSent, amountReceived);
+
+        emit EventsLib.BridgeableTokenSent(
+            msgReceipt.guid,
+            _sendParam.dstEid,
+            msg.sender,
+            _sendParam.to.bytes32ToAddress(),
+            _fee.nativeFee,
+            isPrincipalTokenSent,
+            amountSent,
+            amountReceived
+        );
+    }
 
     /// @dev Burns tokens from the sender's specified balance.
     /// @param _isPrincipalTokenToSend the flag to send the principalToken or the OFT token from the caller.

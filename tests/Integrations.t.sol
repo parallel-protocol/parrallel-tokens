@@ -102,4 +102,28 @@ abstract contract Integrations_Test is Base_Test {
         bridgeableTokenSending.send{ value: fees.nativeFee }(sendParam, fees, payable(msgSender));
         verifyPackets(eidReceiver, bridgeableTokenReceiver);
     }
+
+    function _sendTokenWithPermit(
+        BridgeableTokenP bridgeableTokenSending,
+        address bridgeableTokenReceiver,
+        uint32 eidReceiver,
+        bool isPrincipalTokenSent,
+        uint256 sendAmount,
+        address msgSender,
+        BridgeableTokenP.PermitCalldata memory permitCalldata
+    ) internal {
+        bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(200000, 0);
+        SendParam memory sendParam = SendParam(
+            eidReceiver,
+            addressToBytes32(msgSender),
+            sendAmount,
+            sendAmount,
+            options,
+            abi.encode(isPrincipalTokenSent),
+            ""
+        );
+        MessagingFee memory fees = bridgeableTokenSending.quoteSend(sendParam, false);
+        aBridgeableTokenp.sendWithPermit{ value: fees.nativeFee }(sendParam, fees, permitCalldata, payable(users.alice.addr));
+        verifyPackets(eidReceiver, bridgeableTokenReceiver);
+    }
 }

@@ -7,6 +7,7 @@ import { TestHelperOz5 } from "@layerzerolabs/test-devtools-evm-foundry/contract
 
 import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import { AccessManager, IAccessManaged } from "@openzeppelin/contracts/access/manager/AccessManager.sol";
+import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
 import { CommonErrorsLib } from "contracts/libraries/CommonErrorsLib.sol";
 
@@ -22,6 +23,7 @@ import { FlashLoan_ErrorsLib } from "contracts/flashloan/ErrorsLib.sol";
 import { FlashLoan_EventsLib } from "contracts/flashloan/EventsLib.sol";
 import { FlashParallelToken } from "contracts/flashloan/FlashParallelToken.sol";
 
+import { SigUtils } from "./SigUtils.sol";
 import "./Constants.sol";
 import "./AccessManagerSelectors.sol";
 
@@ -29,6 +31,8 @@ import {console2} from "@forge-std/console2.sol";
 
 abstract contract Deploys is TestHelperOz5, AccessManagerSelectors {
     using OptionsBuilder for bytes;
+
+    SigUtils internal sigUtils;
 
     AccessManager accessManager;
     TokenP aEURp;
