@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
+import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import { OptionsHelper } from "@layerzerolabs/test-devtools-evm-foundry/contracts/OptionsHelper.sol";
+
+import {MathLib} from "contracts/libraries/MathLib.sol";
+
 import "tests/Integrations.t.sol";
 
 contract BridgeableTokenpP_SwapLzTokenToPrincipalToken_Integrations_Test is Integrations_Test {
@@ -81,6 +86,24 @@ contract BridgeableTokenpP_SwapLzTokenToPrincipalToken_Integrations_Test is Inte
         vm.expectRevert(BridgeableTokenP_ErrorsLib.NothingToSwap.selector);
         bBridgeableTokenp.swapLzTokenToPrincipalToken(users.alice.addr, swapAmount);
     }
+
+    modifier reachGlobalCreditLimit() {
+        vm.startPrank(users.guardian.addr);
+        /// @dev By setting the credit daily limit to 1, we direclty almost reach the global credit limit
+        accessManager.execute(address(bBridgeableTokenp), abi.encodeWithSelector(BridgeableTokenP.setGlobalCreditLimit.selector, 1));
+        _;
+    }
+
+    function test_RevertWhen_GlobalCreditAmountReachedAndAmountExceedInt256Max(uint256 swapAmount)      
+        external
+        reachGlobalCreditLimit 
+    {
+        swapAmount = _bound(swapAmount, uint256(type(int256).max)+1, type(uint256).max);
+        vm.startPrank(users.alice.addr);
+        vm.expectRevert(abi.encodeWithSelector(SafeCast.SafeCastOverflowedUintToInt.selector, swapAmount));
+        bBridgeableTokenp.swapLzTokenToPrincipalToken(users.alice.addr, swapAmount);    
+    }
+
 
     function test_RevertWhen_ToIsAddressZero() external {
         vm.startPrank(users.alice.addr);

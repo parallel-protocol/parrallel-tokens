@@ -5,6 +5,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ReentrancyGuardTransient } from "@openzeppelin/contracts/utils/ReentrancyGuardTransient.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 import { Origin } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol";
 import { SendParam, MessagingFee, MessagingReceipt, OFTReceipt } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol";
@@ -525,7 +526,7 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
         uint256 _amount
     ) private view returns (uint256 principalTokenAmountToCredit) {
         if (creditDebitBalance >= int256(globalCreditLimit)) return 0;
-        principalTokenAmountToCredit = int256(_amount) + creditDebitBalance > int256(globalCreditLimit)
+        principalTokenAmountToCredit = SafeCast.toInt256(_amount) + creditDebitBalance > int256(globalCreditLimit)
             ? uint256(int256(globalCreditLimit) - creditDebitBalance)
             : _amount;
         uint256 dailyUsage = dailyCreditAmount[_getCurrentDay()];
