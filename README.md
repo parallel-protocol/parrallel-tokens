@@ -24,6 +24,8 @@ This repository contains all the contracts of Parallel Tokens with associated co
 ### Known Issues
 
 - When updating the FlashloanFeeRecipient current fees are not sent to the current recipient before update (to prevent that this function could be restricted with a timelock role on the AccessManager).
+- When feesRate=0 in the BridgeableToken, bridge can be done repeatedly to DOS swaps from
+  LZ->Principal token. However, user will still pay fees to LZ.
 
 ### Audits
 
