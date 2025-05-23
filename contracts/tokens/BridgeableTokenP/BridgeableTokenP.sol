@@ -506,10 +506,7 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
         }
     }
 
-    /// @notice Credits principal tokens to `_to` address.
-    /// @dev In prioritary, the contract will transfer's principalToken from its balance to the `_to` address.
-    /// If the contract doesn't have enough balance, it will mint the required amount to the `_to` address.
-    /// and update the principalTokenAmountMinted.
+    /// @notice Credits principal tokens (mint) to `_to` address.
     /// @param _to The address to credit the tokens to.
     /// @param _amount The amount of tokens to credit.
     function _creditPrincipalToken(
