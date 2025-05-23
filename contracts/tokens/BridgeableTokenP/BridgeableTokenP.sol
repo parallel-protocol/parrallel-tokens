@@ -441,11 +441,11 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
             creditDebitBalance -= int256(amountSentLD);
 
             if (isIsolateMode) {
-                /// @dev Assert that the final creditDebitBalance is greater than 0.
+                /// @dev Assert that the final creditDebitBalance is greater or equal than 0.
                 if (creditDebitBalance < 0) revert ErrorsLib.IsolateModeLimitReach();
             }
 
-            /// @dev Assert that the final creditDebitBalance is greater than the globalDebitLimit.
+            /// @dev Assert that the final creditDebitBalance is greater or equal than the globalDebitLimit.
             if (creditDebitBalance < globalDebitLimit) revert ErrorsLib.GlobalDebitLimitReached();
 
             ITokenP(address(principalToken)).burnFrom( amountSentLD, msg.sender, address(this));
