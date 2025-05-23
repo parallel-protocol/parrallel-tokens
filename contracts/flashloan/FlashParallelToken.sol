@@ -89,7 +89,7 @@ contract FlashParallelToken is
     //-------------------------------------------
 
     /// @inheritdoc IERC3156FlashLender
-    function flashFee(address token, uint256 amount) external view returns (uint256) {
+    function flashFee(address token, uint256 amount) external view onlyActivetoken(token) returns (uint256) {
         return _flashFee(token, amount);
     }
 
