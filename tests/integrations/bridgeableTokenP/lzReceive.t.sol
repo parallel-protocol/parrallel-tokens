@@ -143,7 +143,7 @@ contract BridgeableTokenpP_LzReceive_Integrations_Test is Integrations_Test {
         assertEq(bBridgeableTokenp.getCreditDebitBalance(), -int256(amountToBridge));
         _;
     }
-
+    
     function test_LzReceive_NotRevertWhen_CreditDebitLimitNegativeAndGlobalCreditAmountIsExceededDuringTx()
         external
         reachGlobalLimitWithNegativeCreditDebitBalance
