@@ -482,6 +482,7 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
     /// @notice Calculates and credit principal tokens to `_to` address and the `feesRecipient`.
     /// @param _to The address to credit the tokens to.
     /// @param _amountLD The amount of token expected to be credited in local decimals.
+    /// @param _isFeeApplicable The flag to apply fees or not
     /// @return amountReceived The amount of principal token received in local decimals.
     /// @return feeAmount The amount of fees token minted in local decimals.
     function _handleCreditPrincipalToken(
