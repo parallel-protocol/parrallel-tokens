@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
+import {IERC20Errors} from "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
+
 import "tests/Units.t.sol";
 
 contract TokenP_BurnSelf_Units_Test is Units_Test {
@@ -36,7 +38,7 @@ contract TokenP_BurnSelf_Units_Test is Units_Test {
         aEURp.approve(users.dao.addr, INITIAL_BALANCE - 1);
 
         vm.startPrank(users.dao.addr);
-        vm.expectRevert(abi.encodeWithSelector(TokenP_ErrorsLib.BurnAmountExceedsAllowance.selector));
+        vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InsufficientAllowance.selector, users.dao.addr, INITIAL_BALANCE - 1, INITIAL_BALANCE));
         aEURp.burnFrom(INITIAL_BALANCE,users.alice.addr, users.dao.addr);
     }
 

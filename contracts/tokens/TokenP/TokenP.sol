@@ -65,9 +65,7 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     /// @inheritdoc ITokenP
     function burnFrom(uint256 amount, address burner, address sender) external restricted {
         if (burner != sender) {
-            uint256 currentAllowance = allowance(burner, sender);
-            if (currentAllowance < amount) revert ErrorsLib.BurnAmountExceedsAllowance();
-            _approve(burner, sender, currentAllowance - amount);
+            _spendAllowance(burner, sender, amount);
         }
         _burn(burner, amount);
     }
