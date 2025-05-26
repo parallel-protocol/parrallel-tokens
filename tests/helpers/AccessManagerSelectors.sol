@@ -11,8 +11,8 @@ import { BridgeableTokenP } from "contracts/tokens/BridgeableTokenP/BridgeableTo
 import { FlashParallelToken } from "contracts/flashloan/FlashParallelToken.sol";
 contract AccessManagerSelectors {
     function getGovernorTokenPSelectorAccess() internal pure returns (bytes4[] memory) {
-        bytes4[] memory selectors = new bytes4[](3);
-        selectors[2] = UUPSUpgradeable.upgradeToAndCall.selector;
+        bytes4[] memory selectors = new bytes4[](1);
+        selectors[0] = UUPSUpgradeable.upgradeToAndCall.selector;
         return selectors;
     }
 
