@@ -31,10 +31,19 @@ This repository contains all the contracts of Parallel Tokens with associated co
 
 ### Audits
 
-Audited by Bailsec in 2025:
+#### Bailsec
+
+Audited by Bailsec in March/April 2025:
 
 - [1st report](./docs/audits/Bailsec%20-%20Parallel%20Protocol%20-%20V3%20Core%20-%201st%20Report.pdf)
 - [final report](./docs/audits/Bailsec%20-%20Parallel%20Protocol%20-%20V3%20Core%20-%20Final%20Report.pdf)
+
+#### Certora
+
+Formal Verification by Certora in March/April 2025:
+
+- [1st report](./docs/audits/Certora_Draft_Report_Parallel_Parallelizer_BridgeToken.pdf)
+- [final report](./docs/audits/Certora_Report_Parallel_Parallelizer_BridgeToken_final.pdf)
 
 ## Development
 
