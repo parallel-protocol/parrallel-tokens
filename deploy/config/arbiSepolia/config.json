@@ -5,7 +5,6 @@
   },
   "tokens": {
     "usdp": {
-      "address": "0x0000000000000000000000000000000000000000",
       "name": "USDp",
       "symbol": "USDp"
     }

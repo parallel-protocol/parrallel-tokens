@@ -14,6 +14,25 @@ This repository contains all the contracts of Parallel Tokens with associated co
 
 ## Deployment Addresses
 
+### Mainnet
+
+### Testnet
+
+#### Sepolia
+
+| Contract           | Explore                                                                                                                       |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0xe8a3DA6f5ed1cf04c58ac7f6A7383641e877517b](https://sepolia.etherscan.io/address/0xe8a3DA6f5ed1cf04c58ac7f6A7383641e877517b) |
+| FlashParallelToken | [0x8B899796b4a442e7723E02f8b5B65a39F27EDAf1](https://sepolia.etherscan.io/address/0x8B899796b4a442e7723E02f8b5B65a39F27EDAf1) |
+| BridgeableUSDp     | [0xFeFc8635edf0fAAD83312A713Cb67722D049C9Bc](https://sepolia.etherscan.io/address/0xFeFc8635edf0fAAD83312A713Cb67722D049C9Bc) |
+
+#### Arbitrum Sepolia
+
+| Contract       | Explore                                                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| USDp           | [0xA7eb076F57960E265B91514c03d1d1281055a75c](https://sepolia.arbiscan.io/address/0xA7eb076F57960E265B91514c03d1d1281055a75c) |
+| BridgeableUSDp | [0xA8FE9843B4Cc2aAB136209B49E2c3E2A7ebD5CFA](https://sepolia.arbiscan.io/address/0xA8FE9843B4Cc2aAB136209B49E2c3E2A7ebD5CFA) |
+
 ## Security
 
 ### Assumptions
