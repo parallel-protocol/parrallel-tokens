@@ -19,7 +19,7 @@ export const getVerifyConfig = (network: string): VerifyConfig => {
     }
     case "sepolia": {
       if (!process.env.MAINNET_ETHERSCAN_API_KEY)
-        throw new Error("ETHERSCAN_API_KEY is not set");
+        throw new Error("MAINNET_ETHERSCAN_API_KEY is not set");
       return {
         etherscan: {
           apiUrl: "https://api-sepolia.etherscan.io",
@@ -57,16 +57,47 @@ export const getVerifyConfig = (network: string): VerifyConfig => {
         },
       };
     }
-    case "fantom": {
-      if (!process.env.FANTOM_ETHERSCAN_API_KEY)
-        throw new Error("FANTOM_ETHERSCAN_API_KEY is not set");
+    case "optimism": {
+      if (!process.env.OPTIMISM_ETHERSCAN_API_KEY)
+        throw new Error("OPTIMISM_ETHERSCAN_API_KEY is not set");
       return {
         etherscan: {
-          apiUrl: "https://api.ftmscan.com",
-          apiKey: process.env.FANTOM_ETHERSCAN_API_KEY,
+          apiUrl: "https://api-optimistic.etherscan.io",
+          apiKey: process.env.OPTIMISM_ETHERSCAN_API_KEY,
         },
       };
     }
+    case "base": {
+      if (!process.env.BASE_ETHERSCAN_API_KEY)
+        throw new Error("BASE_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://api.basescan.org",
+          apiKey: process.env.BASE_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+    case "arbitrum": {
+      if (!process.env.ARBITRUM_ETHERSCAN_API_KEY)
+        throw new Error("ARBITRUM_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://api.arbiscan.io",
+          apiKey: process.env.ARBITRUM_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+    case "sonic": {
+      if (!process.env.SONIC_ETHERSCAN_API_KEY)
+        throw new Error("SONIC_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://api.sonicscan.org",
+          apiKey: process.env.SONIC_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+
     default: {
       throw new Error(`${network} Network Verify not configured`);
     }
