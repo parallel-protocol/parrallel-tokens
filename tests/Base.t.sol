@@ -52,4 +52,27 @@ abstract contract Base_Test is Test, Deploys, Assertions, Defaults, Utils {
         vm.deal({ account: user.addr, newBalance: INITIAL_BALANCE });
     }
 
+     function _signPermitData(
+        uint256 privateKey,
+        address spender,
+        uint256 amount,
+        address token
+    )
+        internal
+        view
+        returns (uint256 deadline, uint8 v, bytes32 r, bytes32 s)
+    {
+        address owner = vm.addr(privateKey);
+        deadline = block.timestamp + 1 days;
+        SigUtils.Permit memory permit = SigUtils.Permit({
+            owner: owner,
+            spender: spender,
+            value: amount,
+            nonce: IERC20Permit(token).nonces(owner),
+            deadline: deadline
+        });
+
+        bytes32 digest = sigUtils.getTypedDataHash(permit);
+        (v, r, s) = vm.sign(privateKey, digest);
+    }
 }

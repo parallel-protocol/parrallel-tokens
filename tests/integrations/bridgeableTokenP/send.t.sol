@@ -13,6 +13,7 @@ contract BridgeableTokenpP_Send_Integrations_Test is Integrations_Test {
     
     function setUp() public override {
         super.setUp();
+        sigUtils = new SigUtils(aEURp.DOMAIN_SEPARATOR());
 
         vm.startPrank(users.admin.addr);
         accessManager.grantRole(MINTER_ROLE_aEURp, address(aBridgeableTokenp),0);
@@ -30,6 +31,42 @@ contract BridgeableTokenpP_Send_Integrations_Test is Integrations_Test {
         vm.startPrank(users.alice.addr);
 
         _sendToken(aBridgeableTokenp, address(bBridgeableTokenp), bEid, sendPrincipalToken, amountToSend, users.alice.addr);
+
+        assertEq(aEURp.balanceOf(users.alice.addr), INITIAL_BALANCE - amountToSend);
+        assertEq(aEURp.balanceOf(address(aBridgeableTokenp)), 0);
+
+        assertEq(aBridgeableTokenp.balanceOf(users.alice.addr), 0);
+        assertEq(aBridgeableTokenp.getCurrentDailyCreditAmount(), 0);
+        assertEq(aBridgeableTokenp.getCurrentDailyDebitAmount(), amountToSend);
+        assertEq(aBridgeableTokenp.getCreditDebitBalance(), -int256(amountToSend));
+        assertEq(aBridgeableTokenp.getMaxDebitableAmount(), DEFAULT_DAILY_DEBIT_LIMIT - amountToSend);
+
+        assertEq(bEURp.balanceOf(users.alice.addr), INITIAL_BALANCE + expectedReceivedAmount);
+        assertEq(bEURp.balanceOf(users.feesRecipient.addr), expectedFeesAmount);
+        assertEq(bBridgeableTokenp.balanceOf(users.alice.addr), 0);
+        assertEq(bBridgeableTokenp.getCurrentDailyCreditAmount(), amountToSend);
+        assertEq(bBridgeableTokenp.getCurrentDailyDebitAmount(), 0);
+        assertEq(bBridgeableTokenp.getCreditDebitBalance(), int256(amountToSend));
+        assertEq(bBridgeableTokenp.getMaxCreditableAmount(), DEFAULT_DAILY_CREDIT_LIMIT - amountToSend);
+    }
+
+    modifier resetAllowance() {
+        vm.startPrank(users.alice.addr);
+        aEURp.approve(address(aBridgeableTokenp), 0);
+        vm.stopPrank();
+        _;
+    }
+    
+    function test_SendWithPermit_Send_EURp_Receive_EURp(uint256 amountToSend) external resetAllowance{
+        amountToSend = _boundBridgeAmount(amountToSend, 1e18, DEFAULT_DAILY_DEBIT_LIMIT);
+        uint256 expectedFeesAmount = amountToSend.percentMul(DEFAULT_FEE_RATE);
+        uint256 expectedReceivedAmount = amountToSend - expectedFeesAmount;
+        
+        (uint256 deadline, uint8 v, bytes32 r, bytes32 s) = 
+            _signPermitData(users.alice.privateKey, address(aBridgeableTokenp), amountToSend, address(aEURp));
+
+        vm.startPrank(users.alice.addr);
+       _sendTokenWithPermit(aBridgeableTokenp, address(bBridgeableTokenp), bEid, sendPrincipalToken, amountToSend, users.alice.addr, BridgeableTokenP.PermitCalldata(deadline, v, r, s));
 
         assertEq(aEURp.balanceOf(users.alice.addr), INITIAL_BALANCE - amountToSend);
         assertEq(aEURp.balanceOf(address(aBridgeableTokenp)), 0);
@@ -306,4 +343,5 @@ contract BridgeableTokenpP_Send_Integrations_Test is Integrations_Test {
         vm.expectRevert(CommonErrorsLib.AddressZero.selector);
         aBridgeableTokenp.send{ value: fees.nativeFee }(sendParam, fees, payable(msg.sender));
     }
+
 }

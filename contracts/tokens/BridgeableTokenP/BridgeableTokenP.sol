@@ -5,6 +5,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ReentrancyGuardTransient } from "@openzeppelin/contracts/utils/ReentrancyGuardTransient.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 import { Origin } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol";
 import { SendParam, MessagingFee, MessagingReceipt, OFTReceipt } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol";
@@ -12,6 +13,7 @@ import { OFT } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol";
 import { OFTMsgCodec } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/libs/OFTMsgCodec.sol";
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import { ITokenP } from "contracts/interfaces/ITokenP.sol";
@@ -37,6 +39,18 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
     //-------------------------------------------
     // Storage
     //-------------------------------------------
+    
+    /// @notice Permit calldata struct
+    struct PermitCalldata {
+        /// @notice The deadline of the permit.
+        uint256 deadline;
+        /// @notice The v value of the permit.
+        uint8 v;
+        /// @notice The r value of the permit.
+        bytes32 r;
+        /// @notice The s value of the permit.
+        bytes32 s;
+    }
 
     /// @notice Struct to initialize the contract
     struct ConfigParams {
@@ -142,35 +156,46 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
         whenNotPaused
         returns (MessagingReceipt memory msgReceipt, OFTReceipt memory oftReceipt)
     {
-        if (_sendParam.composeMsg.length != 32) revert ErrorsLib.InvalidMsgLength();
-        address to = _sendParam.to.bytes32ToAddress();
-        if (to == address(0)) revert CommonErrorsLib.AddressZero();
-        
-        bool isPrincipalTokenSent = abi.decode(_sendParam.composeMsg, (bool));
-
-        (uint256 amountSent, uint256 amountReceived) = _debit(
-            isPrincipalTokenSent,
-            _sendParam.amountLD,
-            _sendParam.minAmountLD,
-            _sendParam.dstEid
+        return _send(
+            _sendParam,
+            _fee,
+            _refundAddress
         );
+    }
 
-        // @dev Builds the options and OFT message to quote in the endpoint.
-        (bytes memory message, bytes memory options) = _buildMsgAndOptions(_sendParam, amountReceived);
-        // @dev Sends the message to the LayerZero endpoint and returns the LayerZero msg receipt.
-        msgReceipt = _lzSend(_sendParam.dstEid, message, options, _fee, _refundAddress);
-        // @dev Formulate the OFT receipt.
-        oftReceipt = OFTReceipt(amountSent, amountReceived);
-
-        emit EventsLib.BridgeableTokenSent(
-            msgReceipt.guid,
-            _sendParam.dstEid,
-            msg.sender,
-            _sendParam.to.bytes32ToAddress(),
-            _fee.nativeFee,
-            isPrincipalTokenSent,
-            amountSent,
-            amountReceived
+    /// @notice Executes the send operation using permit.
+    /// @param _sendParam The parameters for the send operation.
+    /// @param _fee The calculated fees for the send() operation.
+    ///      - nativeFee: The native fees.
+    ///      - lzTokenFee: The lzToken fees.
+    /// @param _permit The permit calldata.
+    /// @param _refundAddress The address to receive any excess funds.
+    /// @return msgReceipt The receipt for the send operation.
+    /// @return oftReceipt The OFT receipt information.
+    ///
+    /// @dev MessagingReceipt: LayerZero msg receipt
+    ///  - guid: The unique identifier for the sent message.
+    ///  - nonce: The nonce of the sent message.
+    ///  - fees: The LayerZero fees incurred for the message.
+    function sendWithPermit(
+        SendParam calldata _sendParam,
+        MessagingFee calldata _fee,
+        PermitCalldata calldata _permit,
+        address _refundAddress
+    )
+        external
+        payable
+        nonReentrant
+        whenNotPaused
+        returns (MessagingReceipt memory msgReceipt, OFTReceipt memory oftReceipt)
+    {
+        // @dev using try catch to avoid reverting the transaction in case of front-running
+        try IERC20Permit(address(principalToken)).permit(msg.sender, address(this), _sendParam.amountLD, _permit.deadline, _permit.v, _permit.r, _permit.s) { }
+            catch { }
+        return _send(
+            _sendParam,
+            _fee,
+            _refundAddress
         );
     }
 
@@ -413,6 +438,56 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
     // Private functions
     //-------------------------------------------
 
+    /// @dev Excute the send operation for both send and sendWithPermit
+    /// @param _sendParam The parameters for the send operation.
+    /// @param _fee The calculated fees for the send() operation.
+    ///      - nativeFee: The native fees.
+    ///      - lzTokenFee: The lzToken fees.
+    /// @param _refundAddress The address to receive any excess funds.
+    /// @return msgReceipt The receipt for the send operation.
+    /// @return oftReceipt The OFT receipt information.
+    ///
+    /// @dev MessagingReceipt: LayerZero msg receipt
+    ///  - guid: The unique identifier for the sent message.
+    ///  - nonce: The nonce of the sent message.
+    ///  - fees: The LayerZero fees incurred for the message.
+    function _send(
+        SendParam calldata _sendParam,
+        MessagingFee calldata _fee,
+        address _refundAddress
+    ) private returns (MessagingReceipt memory msgReceipt, OFTReceipt memory oftReceipt) {
+        if (_sendParam.composeMsg.length != 32) revert ErrorsLib.InvalidMsgLength();
+        address to = _sendParam.to.bytes32ToAddress();
+        if (to == address(0)) revert CommonErrorsLib.AddressZero();
+        
+        bool isPrincipalTokenSent = abi.decode(_sendParam.composeMsg, (bool));
+
+        (uint256 amountSent, uint256 amountReceived) = _debit(
+            isPrincipalTokenSent,
+            _sendParam.amountLD,
+            _sendParam.minAmountLD,
+            _sendParam.dstEid
+        );
+
+        // @dev Builds the options and OFT message to quote in the endpoint.
+        (bytes memory message, bytes memory options) = _buildMsgAndOptions(_sendParam, amountReceived);
+        // @dev Sends the message to the LayerZero endpoint and returns the LayerZero msg receipt.
+        msgReceipt = _lzSend(_sendParam.dstEid, message, options, _fee, _refundAddress);
+        // @dev Formulate the OFT receipt.
+        oftReceipt = OFTReceipt(amountSent, amountReceived);
+
+        emit EventsLib.BridgeableTokenSent(
+            msgReceipt.guid,
+            _sendParam.dstEid,
+            msg.sender,
+            _sendParam.to.bytes32ToAddress(),
+            _fee.nativeFee,
+            isPrincipalTokenSent,
+            amountSent,
+            amountReceived
+        );
+    }
+
     /// @dev Burns tokens from the sender's specified balance.
     /// @param _isPrincipalTokenToSend the flag to send the principalToken or the OFT token from the caller.
     /// @param _amountLD The amount of tokens to send in local decimals.
@@ -440,11 +515,11 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
             creditDebitBalance -= int256(amountSentLD);
 
             if (isIsolateMode) {
-                /// @dev Assert that the final creditDebitBalance is greater than 0.
+                /// @dev Assert that the final creditDebitBalance is greater or equal than 0.
                 if (creditDebitBalance < 0) revert ErrorsLib.IsolateModeLimitReach();
             }
 
-            /// @dev Assert that the final creditDebitBalance is greater than the globalDebitLimit.
+            /// @dev Assert that the final creditDebitBalance is greater or equal than the globalDebitLimit.
             if (creditDebitBalance < globalDebitLimit) revert ErrorsLib.GlobalDebitLimitReached();
 
             ITokenP(address(principalToken)).burnFrom( amountSentLD, msg.sender, address(this));
@@ -481,6 +556,7 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
     /// @notice Calculates and credit principal tokens to `_to` address and the `feesRecipient`.
     /// @param _to The address to credit the tokens to.
     /// @param _amountLD The amount of token expected to be credited in local decimals.
+    /// @param _isFeeApplicable The flag to apply fees or not
     /// @return amountReceived The amount of principal token received in local decimals.
     /// @return feeAmount The amount of fees token minted in local decimals.
     function _handleCreditPrincipalToken(
@@ -504,10 +580,7 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
         }
     }
 
-    /// @notice Credits principal tokens to `_to` address.
-    /// @dev In prioritary, the contract will transfer's principalToken from its balance to the `_to` address.
-    /// If the contract doesn't have enough balance, it will mint the required amount to the `_to` address.
-    /// and update the principalTokenAmountMinted.
+    /// @notice Credits principal tokens (mint) to `_to` address.
     /// @param _to The address to credit the tokens to.
     /// @param _amount The amount of tokens to credit.
     function _creditPrincipalToken(
@@ -525,7 +598,7 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
         uint256 _amount
     ) private view returns (uint256 principalTokenAmountToCredit) {
         if (creditDebitBalance >= int256(globalCreditLimit)) return 0;
-        principalTokenAmountToCredit = int256(_amount) + creditDebitBalance > int256(globalCreditLimit)
+        principalTokenAmountToCredit = SafeCast.toInt256(_amount) + creditDebitBalance > int256(globalCreditLimit)
             ? uint256(int256(globalCreditLimit) - creditDebitBalance)
             : _amount;
         uint256 dailyUsage = dailyCreditAmount[_getCurrentDay()];

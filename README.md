@@ -24,8 +24,17 @@ This repository contains all the contracts of Parallel Tokens with associated co
 ### Known Issues
 
 - When updating the FlashloanFeeRecipient current fees are not sent to the current recipient before update (to prevent that this function could be restricted with a timelock role on the AccessManager).
+- In BridgeableTokenP, LZ messages can be received (causing tokens to be credited) even when the contract is paused. DAO must unlink peers with others chains when pausing a BridgeableTokenP.
+- Fee rate changes can lead to unexpected number of received tokens if fees are updated during an ongoing bridge.
+- When feesRate=0 in the BridgeableToken, bridge can be done repeatedly to DOS swaps from
+  LZ->Principal token. However, user will still pay fees to LZ.
 
 ### Audits
+
+Audited by Bailsec in 2025:
+
+- [1st report](./docs/audits/Bailsec%20-%20Parallel%20Protocol%20-%20V3%20Core%20-%201st%20Report.pdf)
+- [final report](./docs/audits/Bailsec%20-%20Parallel%20Protocol%20-%20V3%20Core%20-%20Final%20Report.pdf)
 
 ## Development
 

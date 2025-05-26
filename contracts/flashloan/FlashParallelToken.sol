@@ -89,14 +89,14 @@ contract FlashParallelToken is
     //-------------------------------------------
 
     /// @inheritdoc IERC3156FlashLender
-    function flashFee(address token, uint256 amount) external view returns (uint256) {
+    function flashFee(address token, uint256 amount) external view onlyActivetoken(token) returns (uint256) {
         return _flashFee(token, amount);
     }
 
     /// @inheritdoc IERC3156FlashLender
     function maxFlashLoan(address token) external view returns (uint256) {
         // It will be 0 anyway if the token was not added
-        return tokenMap[token].maxBorrowable;
+        return tokenMap[token].isActive ? tokenMap[token].maxBorrowable: 0;
     }
 
     /// @inheritdoc IERC3156FlashLender
@@ -134,11 +134,13 @@ contract FlashParallelToken is
 
     /// @notice Accrues interest to the fee recipient for a given list of tokens
     /// @param tokens List of addresses of tokens to accrue interest for
-    /// @return balance Amount of interest accrued
-    function accrueInterestToFeeRecipient(address[] calldata tokens) external returns (uint256 balance) {
+    /// @return balances Amounts of interest accrued
+    function accrueInterestToFeeRecipient(address[] calldata tokens) external returns (uint256[] memory balances) {
+        balances = new uint256[](tokens.length);
         for (uint256 i = 0; i < tokens.length; i++) {
             IERC20 token = IERC20(tokens[i]);
-            balance += token.balanceOf(address(this));
+            uint256 balance= token.balanceOf(address(this));
+            balances[i]=balance;
             token.safeTransfer(flashLoanFeeRecipient, balance);
         }
     }
