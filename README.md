@@ -1,165 +1,130 @@
-# <img src=".github/assets/logo.svg" alt="Angle" height="40px"> Angle Tokens
+# Parallel Tokens
 
-[![CI](https://github.com/AngleProtocol/boilerplate/actions/workflows/ci.yml/badge.svg)](https://github.com/AngleProtocol/boilerplate/actions)
+## Summary
 
-This repository contains all the contracts of the Angle Tokens with associated contracts (CoreBorrow, FlashAngle ...)
+This repository contains all the contracts of Parallel Tokens with associated contract.
 
-## Starting
+## Architecture
 
-### Install packages
+- [TokenP](./contracts/tokens/TokenP/TokenP.sol) contract is the ERC20 stablecoin.
+- [BridgeableTokenP](./contracts/tokens/BridgeableTokenP/BridgeableTokenP.sol) is an OFT (layerZero standard) contract that unlock the power of TokenP to be bridgeable between specific chains.
+- [FlashParallelToken](./contracts/flashloan/FlashParallelToken.sol) is the flashloan contract on top of TokenP's contracts.
 
-You can install all dependencies by running
+## Documentation Links
+
+## Deployment Addresses
+
+### Mainnet
+
+### Testnet
+
+#### Sepolia
+
+| Contract           | Explore                                                                                                                       |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0xe8a3DA6f5ed1cf04c58ac7f6A7383641e877517b](https://sepolia.etherscan.io/address/0xe8a3DA6f5ed1cf04c58ac7f6A7383641e877517b) |
+| FlashParallelToken | [0x8B899796b4a442e7723E02f8b5B65a39F27EDAf1](https://sepolia.etherscan.io/address/0x8B899796b4a442e7723E02f8b5B65a39F27EDAf1) |
+| BridgeableUSDp     | [0xFeFc8635edf0fAAD83312A713Cb67722D049C9Bc](https://sepolia.etherscan.io/address/0xFeFc8635edf0fAAD83312A713Cb67722D049C9Bc) |
+
+#### Arbitrum Sepolia
+
+| Contract       | Explore                                                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| USDp           | [0xA7eb076F57960E265B91514c03d1d1281055a75c](https://sepolia.arbiscan.io/address/0xA7eb076F57960E265B91514c03d1d1281055a75c) |
+| BridgeableUSDp | [0xA8FE9843B4Cc2aAB136209B49E2c3E2A7ebD5CFA](https://sepolia.arbiscan.io/address/0xA8FE9843B4Cc2aAB136209B49E2c3E2A7ebD5CFA) |
+
+## Security
+
+### Assumptions
+
+- Every restricted access is managed by an [AccessManager](https://github.com/parallel-protocol/parallel-core/blob/main/contracts/access/AccessManager.sol) contract following the OpenZeppelin standard
+- The owner of [BridgeableTokenP](./contracts/tokens/BridgeableTokenP/BridgeableTokenP.sol) will be the AccessManager contract or a multisig.
+
+### Known Issues
+
+- When updating the FlashloanFeeRecipient current fees are not sent to the current recipient before update (to prevent that this function could be restricted with a timelock role on the AccessManager).
+- In BridgeableTokenP, LZ messages can be received (causing tokens to be credited) even when the contract is paused. DAO must unlink peers with others chains when pausing a BridgeableTokenP.
+- Fee rate changes can lead to unexpected number of received tokens if fees are updated during an ongoing bridge.
+- When feesRate=0 in the BridgeableToken, bridge can be done repeatedly to DOS swaps from
+  LZ->Principal token. However, user will still pay fees to LZ.
+
+### Audits
+
+#### Bailsec
+
+Audited by Bailsec in March/April 2025:
+
+- [1st report](./docs/audits/Bailsec%20-%20Parallel%20Protocol%20-%20V3%20Core%20-%201st%20Report.pdf)
+- [final report](./docs/audits/Bailsec%20-%20Parallel%20Protocol%20-%20V3%20Core%20-%20Final%20Report.pdf)
+
+#### Certora
+
+Formal Verification by Certora in March/April 2025:
+
+- [1st report](./docs/audits/Certora_Draft_Report_Parallel_Parallelizer_BridgeToken.pdf)
+- [final report](./docs/audits/Certora_Report_Parallel_Parallelizer_BridgeToken_final.pdf)
+
+## Development
+
+### Foundry
+
+[Install foundry follow the instructions.](https://book.getfoundry.sh/getting-started/installation)
+
+### Install js dependencies
 
 ```bash
-yarn
-forge i
+bun install
 ```
 
-### Create `.env` file
+### Setup `.env` file
 
 In order to interact with non local networks, you must create an `.env` that has:
 
-- `PRIVATE_KEY`
-- `MNEMONIC`
-- network key (eg. `ALCHEMY_NETWORK_KEY`)
-- `ETHERSCAN_API_KEY`
+```bash
+PRIVATE_KEY="PRIVATE_KEY"
+ALCHEMY_API_KEY="ALCHEMY_API_KEY"
+MAINNET_ETHERSCAN_API_KEY="MAINNET_ETHERSCAN_API_KEY"
+```
 
 For additional keys, you can check the `.env.example` file.
 
-Warning: always keep your confidential information safe.
+**Warning: always keep your confidential information safe**
 
-## Headers
-
-To automatically create headers, follow: <https://github.com/Picodes/headers>
-
-## Hardhat Command line completion
-
-Follow these instructions to have hardhat command line arguments completion: <https://hardhat.org/hardhat-runner/docs/guides/command-line-completion>
-
-## Foundry Installation
+### Compile contracts
 
 ```bash
-curl -L https://foundry.paradigm.xyz | bash
-
-source /root/.zshrc
-# or, if you're under bash: source /root/.bashrc
-
-foundryup
+bun run compile
 ```
 
-To install the standard library:
+### Run tests
 
 ```bash
-forge install foundry-rs/forge-std
+bun run test
 ```
 
-To update libraries:
+### [Slither](https://github.com/crytic/slither)
 
 ```bash
-forge update
+bun run slither
 ```
 
-### Foundry on Docker 🐳
+You will find other useful commands in the [package.json](./package.json) file.
 
-**If you don’t want to install Rust and Foundry on your computer, you can use Docker**
-Image is available here [ghcr.io/foundry-rs/foundry](http://ghcr.io/foundry-rs/foundry).
+## Contributing
 
-```bash
-docker pull ghcr.io/foundry-rs/foundry
-docker tag ghcr.io/foundry-rs/foundry:latest foundry:latest
-```
+If you're interested in contributing, please see our [contributions guidelines](./CONTRIBUTING.md).
 
-To run the container:
+## Questions & Feedback
 
-```bash
-docker run -it --rm -v $(pwd):/app -w /app foundry sh
-```
+For any question or feedback you can use [discord](https://discord.com/invite/mimodao). Don't hesitate to reach out on
+[Twitter](https://twitter.com/mimo_labs) as well.
 
-Then you are inside the container and can run Foundry’s commands.
+## Licensing
 
-### Tests
+The primary license for this repository is the MIT license. See [`LICENSE`](./LICENSE).
+Minus the following exceptions:
 
-You can run tests as follows:
+- tests files are under UNLICENSED license
+- mocks contracts are under UNLICENSED license
 
-```bash
-forge test -vvvv --watch
-forge test -vvvv --match-path contracts/forge-tests/KeeperMulticall.t.sol
-forge test -vvvv --match-test "testAbc*"
-forge test -vvvv --fork-url https://eth-mainnet.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf
-```
-
-You can also list tests:
-
-```bash
-forge test --list
-forge test --list --json --match-test "testXXX*"
-```
-
-### Deploying
-
-There is an example script in the `scripts/foundry` folder. Then you can run:
-
-```bash
-yarn foundry:deploy <FILE_NAME> --rpc-url <NETWORK_NAME>
-```
-
-Example:
-
-```bash
-yarn foundry:deploy scripts/foundry/DeployMockAgEUR.s.sol --rpc-url goerli
-```
-
-### Coverage
-
-We recommend the use of this [vscode extension](ryanluker.vscode-coverage-gutters).
-
-```bash
-yarn hardhat:coverage
-yarn foundry:coverage
-```
-
-### Simulate
-
-You can simulate your transaction live or in fork mode. For both option you need to
-complete the `scripts/foundry/Simulate.s.sol` with your values: address sending the tx,
-address caled and the data to give to this address call.
-
-For live simulation
-
-```bash
-yarn foundry:simulate
-```
-
-For fork simulation
-
-```bash
-yarn foundry:fork
-yarn foundry:simulate:fork
-```
-
-For fork simulation at a given block
-
-```bash
-yarn foundry:fork:block ${XXXX}
-yarn foundry:simulate:fork
-```
-
-### Gas report
-
-```bash
-yarn foundry:gas
-```
-
-## Slither
-
-```bash
-pip3 install slither-analyzer
-pip3 install solc-select
-solc-select install 0.8.11
-solc-select use 0.8.11
-slither .
-```
-
-## Media
-
-Don't hesitate to reach out on [Twitter](https://twitter.com/AngleProtocol) 🐦
+Each of these files states their license type.
