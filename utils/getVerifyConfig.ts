@@ -97,7 +97,100 @@ export const getVerifyConfig = (network: string): VerifyConfig => {
         },
       };
     }
-
+    case "sei": {
+      if (!process.env.SEI_ETHERSCAN_API_KEY)
+        throw new Error("SEI_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://seitrace.com/pacific-1",
+          apiKey: process.env.SEI_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+    case "avalanche": {
+      return {
+        etherscan: {
+          apiUrl: "https://api.snowtrace.io",
+          apiKey: "no-need",
+        },
+      };
+    }
+    case "bsc": {
+      if (!process.env.BSC_ETHERSCAN_API_KEY)
+        throw new Error("BSC_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://api.bscscan.com",
+          apiKey: process.env.BSC_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+    case "berachain": {
+      if (!process.env.BERACHAIN_ETHERSCAN_API_KEY)
+        throw new Error("BERACHAIN_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://api.berascan.com",
+          apiKey: process.env.BERACHAIN_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+    case "scroll": {
+      if (!process.env.SCROLL_ETHERSCAN_API_KEY)
+        throw new Error("SCROLL_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://api.scrollscan.com",
+          apiKey: process.env.SCROLL_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+    case "mantle": {
+      if (!process.env.MANTLE_ETHERSCAN_API_KEY)
+        throw new Error("MANTLE_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://api.mantlescan.xyz",
+          apiKey: process.env.MANTLE_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+    case "gnosis": {
+      if (!process.env.GNOSIS_ETHERSCAN_API_KEY)
+        throw new Error("GNOSIS_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://api.gnosisscan.io",
+          apiKey: process.env.GNOSIS_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+    case "unichain": {
+      if (!process.env.UNICHAIN_ETHERSCAN_API_KEY)
+        throw new Error("UNICHAIN_ETHERSCAN_API_KEY is not set");
+      return {
+        etherscan: {
+          apiUrl: "https://api.uniscan.xyz",
+          apiKey: process.env.UNICHAIN_ETHERSCAN_API_KEY,
+        },
+      };
+    }
+    case "ink": {
+      return {
+        etherscan: {
+          apiUrl: "https://explorer.inkonchain.com",
+          apiKey: "no-need",
+        },
+      };
+    }
+    case "hyperevm": {
+      return {
+        etherscan: {
+          apiUrl: "https://www.hyperscan.com/",
+          apiKey: "no-need",
+        },
+      };
+    }
     default: {
       throw new Error(`${network} Network Verify not configured`);
     }
