@@ -42,8 +42,8 @@ const config: HardhatUserConfig = {
     mainnet: {
       eid: EndpointId.ETHEREUM_V2_MAINNET,
       url: getRpcURL("mainnet"),
-      accounts,
       verify: getVerifyConfig("mainnet"),
+      accounts,
     },
     sepolia: {
       eid: EndpointId.SEPOLIA_V2_TESTNET,
@@ -151,6 +151,11 @@ const config: HardhatUserConfig = {
       eid: EndpointId.HYPERLIQUID_V2_MAINNET,
       url: getRpcURL("hyperevm"),
       verify: getVerifyConfig("hyperevm"),
+      accounts,
+    },
+    tac: {
+      url: getRpcURL("tac"),
+      verify: getVerifyConfig("tac"),
       accounts,
     },
   },

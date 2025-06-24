@@ -191,6 +191,14 @@ export const getVerifyConfig = (network: string): VerifyConfig => {
         },
       };
     }
+    case "tac": {
+      return {
+        etherscan: {
+          apiUrl: "https://explorer.tac.build",
+          apiKey: "no-need",
+        },
+      };
+    }
     default: {
       throw new Error(`${network} Network Verify not configured`);
     }
