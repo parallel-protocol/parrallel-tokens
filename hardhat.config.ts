@@ -154,6 +154,7 @@ const config: HardhatUserConfig = {
       accounts,
     },
     tac: {
+      eid: EndpointId.TAC_V2_MAINNET,
       url: getRpcURL("tac"),
       verify: getVerifyConfig("tac"),
       accounts,

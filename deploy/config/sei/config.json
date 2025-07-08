@@ -1,0 +1,29 @@
+{
+  "accessManager": "0xfD28f108e95f4D41daAE9dbfFf707D677985998E",
+  "wallets": {
+    "dao": "0x1AD681fa147f35AB7B35c7a289B1938Bc0171e8b"
+  },
+  "tokens": {
+    "usdp": {
+      "name": "USDp",
+      "symbol": "USDp"
+    }
+  },
+  "bridgeableTokenP": {
+    "usdp": {
+      "lzName": "lz-USDp",
+      "lzSymbol": "lz-USDp",
+      "principalToken": "USDp",
+      "dailyCreditLimit": "2500000000000000000000000",
+      "globalCreditLimit": "10000000000000000000000000",
+      "dailyDebitLimit": "2500000000000000000000000",
+      "globalDebitLimit": "10000000000000000000000000",
+      "feesRecipient": "dao",
+      "feesRate": 0,
+      "isIsolateMode": false
+    }
+  },
+  "flashParallelToken": {
+    "feeRecipient": "dao"
+  }
+}
