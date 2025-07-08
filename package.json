@@ -30,30 +30,30 @@
     "verify": "npx hardhat etherscan-verify --sleep"
   },
   "devDependencies": {
-    "@layerzerolabs/lz-definitions": "^3.0.106",
+    "@layerzerolabs/lz-definitions": "^3.0.110",
     "@layerzerolabs/metadata-tools": "^2.0.0",
-    "@layerzerolabs/test-devtools-evm-foundry": "^6.0.2",
+    "@layerzerolabs/test-devtools-evm-foundry": "^6.0.3",
     "@layerzerolabs/toolbox-hardhat": "^0.6.11",
     "@typechain/hardhat": "^9.1.0",
     "@types/fs-extra": "^11.0.4",
     "cross-env": "^7.0.3",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.6.1",
     "forge-std": "github:foundry-rs/forge-std#v1.9.5",
     "fs-extra": "^11.3.0",
-    "hardhat": "^2.22.19",
-    "hardhat-deploy": "^1.0.1",
-    "prettier": "^3.5.3",
-    "prettier-plugin-solidity": "^1.4.2",
-    "solhint": "^5.1.0",
+    "hardhat": "^2.25.0",
+    "hardhat-deploy": "^1.0.4",
+    "prettier": "^3.6.2",
+    "prettier-plugin-solidity": "^1.4.3",
+    "solhint": "^5.2.0",
     "solhint-plugin-prettier": "^0.1.0",
-    "solidity-bytes-utils": "^0.8.3",
+    "solidity-bytes-utils": "^0.8.4",
     "ts-node": "^10.9.2",
     "typechain": "^8.3.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@layerzerolabs/lz-evm-oapp-v2": "^3.0.106",
-    "@openzeppelin/contracts": "^5.2.0",
-    "@openzeppelin/contracts-upgradeable": "^5.2.0"
+    "@layerzerolabs/lz-evm-oapp-v2": "^3.0.110",
+    "@openzeppelin/contracts": "^5.3.0",
+    "@openzeppelin/contracts-upgradeable": "^5.3.0"
   }
 }
