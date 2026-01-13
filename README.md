@@ -16,6 +16,142 @@ This repository contains all the contracts of Parallel Tokens with associated co
 
 ### Mainnet
 
+#### Ethereum
+
+| Contract           | Explore                                                                                                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x9B3a8f7CEC208e247d97dEE13313690977e24459](https://etherscan.io/address/0x9B3a8f7CEC208e247d97dEE13313690977e24459) |
+| FlashParallelToken | [0xC9B6279baa19dBB8bCc3250c89cAa093AaBA0bfc](https://etherscan.io/address/0xC9B6279baa19dBB8bCc3250c89cAa093AaBA0bfc) |
+| BridgeableUSDp     | [0x78BB4882b77D74aD9B04Ab71fE8e61f72595823C](https://etherscan.io/address/0x78BB4882b77D74aD9B04Ab71fE8e61f72595823C) |
+
+#### Polygon
+
+| Contract           | Explore                                                                                                                  |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| USDp               | [0x1250304F66404cd153fA39388DDCDAec7E0f1707](https://polygonscan.com/address/0x1250304F66404cd153fA39388DDCDAec7E0f1707) |
+| FlashParallelToken | [0xC15Fd01A21E8f6625f709b16f6b3562d2848Da5f](https://polygonscan.com/address/0xC15Fd01A21E8f6625f709b16f6b3562d2848Da5f) |
+| BridgeableUSDp     | [0x9aFDB5A5eC2BBDDdAa4573BAA25CAA4e4e4a2CA9](https://polygonscan.com/address/0x9aFDB5A5eC2BBDDdAa4573BAA25CAA4e4e4a2CA9) |
+
+#### Base
+
+| Contract           | Explore                                                                                                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x76A9A0062ec6712b99B4f63bD2b4270185759dd5](https://basescan.org/address/0x76A9A0062ec6712b99B4f63bD2b4270185759dd5) |
+| FlashParallelToken | [0x08417cdb7F52a5021bB4eb6E0deAf3f295c3f182](https://basescan.org/address/0x08417cdb7F52a5021bB4eb6E0deAf3f295c3f182) |
+| BridgeableUSDp     | [0x4Dde0e308CFB60515218C6ad2DF1134Fc48531FC](https://basescan.org/address/0x4Dde0e308CFB60515218C6ad2DF1134Fc48531FC) |
+
+#### Optimism
+
+| Contract           | Explore                                                                                                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x90337e484B1Cb02132fc150d3Afa262147348545](https://optimistic.etherscan.io/address/0x90337e484B1Cb02132fc150d3Afa262147348545) |
+| FlashParallelToken | [0x3EBE332d2AA8cCB5dDc051c9925D9A41708e54D9](https://optimistic.etherscan.io/address/0x3EBE332d2AA8cCB5dDc051c9925D9A41708e54D9) |
+| BridgeableUSDp     | [0x76A9A0062ec6712b99B4f63bD2b4270185759dd5](https://optimistic.etherscan.io/address/0x76A9A0062ec6712b99B4f63bD2b4270185759dd5) |
+
+#### Arbitrum
+
+| Contract           | Explore                                                                                                              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x76A9A0062ec6712b99B4f63bD2b4270185759dd5](https://arbiscan.io/address/0x76A9A0062ec6712b99B4f63bD2b4270185759dd5) |
+| FlashParallelToken | [0x08417cdb7F52a5021bB4eb6E0deAf3f295c3f182](https://arbiscan.io/address/0x08417cdb7F52a5021bB4eb6E0deAf3f295c3f182) |
+| BridgeableUSDp     | [0x4Dde0e308CFB60515218C6ad2DF1134Fc48531FC](https://arbiscan.io/address/0x4Dde0e308CFB60515218C6ad2DF1134Fc48531FC) |
+
+#### Sonic
+
+| Contract           | Explore                                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x08417cdb7F52a5021bB4eb6E0deAf3f295c3f182](https://sonicscan.org/address/0x08417cdb7F52a5021bB4eb6E0deAf3f295c3f182) |
+| FlashParallelToken | [0x2cb56dF31b909854B01D4B1EAd5676cf90e885E7](https://sonicscan.org/address/0x2cb56dF31b909854B01D4B1EAd5676cf90e885E7) |
+| BridgeableUSDp     | [0xDa818995DdEee3AC36BF492133E1FeAE1FA377E6](https://sonicscan.org/address/0xDa818995DdEee3AC36BF492133E1FeAE1FA377E6) |
+
+#### Sei
+
+| Contract           | Explore                                                                                                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x048C4e07D170eEdEE8772cA76AEE1C4e2D133d5c](https://seitrace.com/address/0x048C4e07D170eEdEE8772cA76AEE1C4e2D133d5c) |
+| FlashParallelToken | [0xc0e62F863bbD9dab9d2F79e4EcC248e60c4fE3FA](https://seitrace.com/address/0xc0e62F863bbD9dab9d2F79e4EcC248e60c4fE3FA) |
+| BridgeableUSDp     | [0x7b54f3D993d3bcA077946034Ea710F9c07420C72](https://seitrace.com/address/0x7b54f3D993d3bcA077946034Ea710F9c07420C72) |
+
+#### Avalanche
+
+| Contract           | Explore                                                                                                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x9eE1963f05553eF838604Dd39403be21ceF26AA4](https://snowtrace.io/address/0x9eE1963f05553eF838604Dd39403be21ceF26AA4) |
+| FlashParallelToken | [0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277](https://snowtrace.io/address/0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277) |
+| BridgeableUSDp     | [0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec](https://snowtrace.io/address/0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec) |
+
+#### BSC
+
+| Contract           | Explore                                                                                                              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x048C4e07D170eEdEE8772cA76AEE1C4e2D133d5c](https://bscscan.com/address/0x048C4e07D170eEdEE8772cA76AEE1C4e2D133d5c) |
+| FlashParallelToken | [0xc0e62F863bbD9dab9d2F79e4EcC248e60c4fE3FA](https://bscscan.com/address/0xc0e62F863bbD9dab9d2F79e4EcC248e60c4fE3FA) |
+| BridgeableUSDp     | [0x7b54f3D993d3bcA077946034Ea710F9c07420C72](https://bscscan.com/address/0x7b54f3D993d3bcA077946034Ea710F9c07420C72) |
+
+#### Berachain
+
+| Contract           | Explore                                                                                                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x9eE1963f05553eF838604Dd39403be21ceF26AA4](https://berascan.com/address/0x9eE1963f05553eF838604Dd39403be21ceF26AA4) |
+| FlashParallelToken | [0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277](https://berascan.com/address/0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277) |
+| BridgeableUSDp     | [0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec](https://berascan.com/address/0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec) |
+
+#### Scroll
+
+| Contract           | Explore                                                                                                                 |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x9eE1963f05553eF838604Dd39403be21ceF26AA4](https://scrollscan.com/address/0x9eE1963f05553eF838604Dd39403be21ceF26AA4) |
+| FlashParallelToken | [0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277](https://scrollscan.com/address/0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277) |
+| BridgeableUSDp     | [0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec](https://scrollscan.com/address/0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec) |
+
+#### Mantle
+
+| Contract           | Explore                                                                                                                 |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x9eE1963f05553eF838604Dd39403be21ceF26AA4](https://mantlescan.xyz/address/0x9eE1963f05553eF838604Dd39403be21ceF26AA4) |
+| FlashParallelToken | [0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277](https://mantlescan.xyz/address/0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277) |
+| BridgeableUSDp     | [0x0000](https://mantlescan.xyz/address/0x0000)                                                                         |
+
+#### Gnosis
+
+| Contract           | Explore                                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x9eE1963f05553eF838604Dd39403be21ceF26AA4](https://gnosisscan.io/address/0x9eE1963f05553eF838604Dd39403be21ceF26AA4) |
+| FlashParallelToken | [0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277](https://gnosisscan.io/address/0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277) |
+| BridgeableUSDp     | [0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec](https://gnosisscan.io/address/0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec) |
+
+#### Unichain
+
+| Contract           | Explore                                                                                                              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x9eE1963f05553eF838604Dd39403be21ceF26AA4](https://uniscan.xyz/address/0x9eE1963f05553eF838604Dd39403be21ceF26AA4) |
+| FlashParallelToken | [0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277](https://uniscan.xyz/address/0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277) |
+| BridgeableUSDp     | [0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec](https://uniscan.xyz/address/0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec) |
+
+#### Ink
+
+| Contract           | Explore                                                                                                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x9eE1963f05553eF838604Dd39403be21ceF26AA4](https://explorer.inkonchain.com/address/0x9eE1963f05553eF838604Dd39403be21ceF26AA4) |
+| FlashParallelToken | [0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277](https://explorer.inkonchain.com/address/0x9e0DCF7a33bBde6689560C5c807dd2a3dF991277) |
+| BridgeableUSDp     | [0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec](https://explorer.inkonchain.com/address/0x9fFaCB3dB5cB74BdD4C68af3b7CF203130c699ec) |
+
+#### HyperEVM
+
+| Contract           | Explore                                                                                                                    |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0xBE65F0F410A72BeC163dC65d46c83699e957D588](https://www.hyperscan.com/address/0xBE65F0F410A72BeC163dC65d46c83699e957D588) |
+| FlashParallelToken | [0x15452454A9735D68df430879B2941316a09295B1](https://www.hyperscan.com/address/0x15452454A9735D68df430879B2941316a09295B1) |
+| BridgeableUSDp     | [0xC3BEF21Ea7dEB5C34CF33E918c8e28972C8048eD](https://www.hyperscan.com/address/0xC3BEF21Ea7dEB5C34CF33E918c8e28972C8048eD) |
+
+#### Tac
+
+| Contract           | Explore                                                                                                                     |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x4DeF531c3060686948f00EcC7504f2E0b71EDa14](https://explorer.tac.build/address/0x4DeF531c3060686948f00EcC7504f2E0b71EDa14) |
+| FlashParallelToken | [0x76A9A0062ec6712b99B4f63bD2b4270185759dd5](https://explorer.tac.build/address/0x76A9A0062ec6712b99B4f63bD2b4270185759dd5) |
+| BridgeableUSDp     | [0xB3DbecE41acDD6aD76d037b8Da2e53C58826746c](https://explorer.tac.build/address/0xB3DbecE41acDD6aD76d037b8Da2e53C58826746c) |
+
 ### Testnet
 
 #### Sepolia
