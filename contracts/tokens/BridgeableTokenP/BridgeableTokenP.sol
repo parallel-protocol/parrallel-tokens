@@ -312,14 +312,16 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
 
     /// @notice Retrieves the MAX amount of PrincipalToken to be debit regarding limits.
     function getMaxDebitableAmount() external view returns (uint256) {
-        if (isIsolateMode && creditDebitBalance < 0) return 0;
+        if (isIsolateMode && creditDebitBalance <= 0) return 0;
         if (creditDebitBalance <= globalDebitLimit) return 0;
         uint256 globalMax = MathLib.abs(globalDebitLimit - creditDebitBalance);
         uint256 currentDebitAmount = dailyDebitAmount[_getCurrentDay()];
         uint256 dailyMax = dailyDebitLimit > currentDebitAmount
             ? dailyDebitLimit - currentDebitAmount
             : 0;
-        return MathLib.min(globalMax, dailyMax);
+        uint256 result = MathLib.min(globalMax, dailyMax);
+        if (isIsolateMode) return MathLib.min(result, uint256(creditDebitBalance));
+        return result;
     }
 
     //-------------------------------------------
