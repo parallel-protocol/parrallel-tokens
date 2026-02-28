@@ -204,7 +204,7 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
     /// transferred or minted to the user.
     /// @param _to The address to credit the principalToken to.
     /// @param _amount The amount of OFT token to swap.
-    function swapLzTokenToPrincipalToken(address _to, uint256 _amount) external nonReentrant whenNotPaused {
+    function swapLzTokenToPrincipalToken(address _to, uint256 _amount) external nonReentrant whenNotPaused returns (uint256) {
         if (_to == address(0)) revert CommonErrorsLib.AddressZero();
 
         uint256 totalPrincipalTokenAmountToCredit = _calculatePrincipalTokenAmountToCredit(_amount);
@@ -232,8 +232,10 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
         if (feeAmount > 0) {
             _creditPrincipalToken(feesRecipient, feeAmount);
         }
-        /// @dev Mmint the principalToken to the user.
+        /// @dev Mint the principalToken to the user.
         _creditPrincipalToken(_to, principalTokenAmountCredited);
+
+        return principalTokenAmountCredited;
     }
 
     //-------------------------------------------
