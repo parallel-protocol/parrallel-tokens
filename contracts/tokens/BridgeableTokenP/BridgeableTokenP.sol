@@ -204,7 +204,7 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
     /// transferred or minted to the user.
     /// @param _to The address to credit the principalToken to.
     /// @param _amount The amount of OFT token to swap.
-    function swapLzTokenToPrincipalToken(address _to, uint256 _amount) external nonReentrant whenNotPaused {
+    function swapLzTokenToPrincipalToken(address _to, uint256 _amount) external nonReentrant whenNotPaused returns (uint256) {
         if (_to == address(0)) revert CommonErrorsLib.AddressZero();
 
         uint256 totalPrincipalTokenAmountToCredit = _calculatePrincipalTokenAmountToCredit(_amount);
@@ -232,8 +232,10 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
         if (feeAmount > 0) {
             _creditPrincipalToken(feesRecipient, feeAmount);
         }
-        /// @dev Mmint the principalToken to the user.
+        /// @dev Mint the principalToken to the user.
         _creditPrincipalToken(_to, principalTokenAmountCredited);
+
+        return principalTokenAmountCredited;
     }
 
     //-------------------------------------------
@@ -310,14 +312,16 @@ contract BridgeableTokenP is OFT, ReentrancyGuardTransient, Pausable {
 
     /// @notice Retrieves the MAX amount of PrincipalToken to be debit regarding limits.
     function getMaxDebitableAmount() external view returns (uint256) {
-        if (isIsolateMode && creditDebitBalance < 0) return 0;
+        if (isIsolateMode && creditDebitBalance <= 0) return 0;
         if (creditDebitBalance <= globalDebitLimit) return 0;
         uint256 globalMax = MathLib.abs(globalDebitLimit - creditDebitBalance);
         uint256 currentDebitAmount = dailyDebitAmount[_getCurrentDay()];
         uint256 dailyMax = dailyDebitLimit > currentDebitAmount
             ? dailyDebitLimit - currentDebitAmount
             : 0;
-        return MathLib.min(globalMax, dailyMax);
+        uint256 result = MathLib.min(globalMax, dailyMax);
+        if (isIsolateMode) return MathLib.min(result, uint256(creditDebitBalance));
+        return result;
     }
 
     //-------------------------------------------
