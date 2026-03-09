@@ -85,6 +85,46 @@ export const tacContract: OmniPointHardhat = {
   contractName: `BridgeableTokenP_${tokenP}`,
 };
 
+export const plumeContract: OmniPointHardhat = {
+  eid: EndpointId.PLUME_V2_MAINNET,
+  contractName: `BridgeableTokenP_${tokenP}`,
+};
+
+export const xlayerContract: OmniPointHardhat = {
+  eid: EndpointId.XLAYER_V2_MAINNET,
+  contractName: `BridgeableTokenP_${tokenP}`,
+};
+
+export const plasmaContract: OmniPointHardhat = {
+  eid: EndpointId.PLASMA_V2_MAINNET,
+  contractName: `BridgeableTokenP_${tokenP}`,
+};
+
+export const lineaContract: OmniPointHardhat = {
+  eid: EndpointId.ZKCONSENSYS_V2_MAINNET,
+  contractName: `BridgeableTokenP_${tokenP}`,
+};
+
+export const katanaContract: OmniPointHardhat = {
+  eid: EndpointId.KATANA_V2_MAINNET,
+  contractName: `BridgeableTokenP_${tokenP}`,
+};
+
+export const fraxtalContract: OmniPointHardhat = {
+  eid: EndpointId.FRAXTAL_V2_MAINNET,
+  contractName: `BridgeableTokenP_${tokenP}`,
+};
+
+export const worldContract: OmniPointHardhat = {
+  eid: EndpointId.WORLDCHAIN_V2_MAINNET,
+  contractName: `BridgeableTokenP_${tokenP}`,
+};
+
+export const monadContract: OmniPointHardhat = {
+  eid: EndpointId.MONAD_V2_MAINNET,
+  contractName: `BridgeableTokenP_${tokenP}`,
+};
+
 export const contracts: Record<Network, OmniPointHardhat> = {
   [NETWORKS.ARBITRUM]: arbitrumContract,
   [NETWORKS.AVALANCHE]: avalancheContract,
@@ -102,4 +142,12 @@ export const contracts: Record<Network, OmniPointHardhat> = {
   [NETWORKS.SONIC]: sonicContract,
   [NETWORKS.TAC]: tacContract,
   [NETWORKS.UNICHAIN]: unichainContract,
+  [NETWORKS.PLUME]: plumeContract,
+  [NETWORKS.XLAYER]: xlayerContract,
+  [NETWORKS.PLASMA]: plasmaContract,
+  [NETWORKS.LINEA]: lineaContract,
+  [NETWORKS.KATANA]: katanaContract,
+  [NETWORKS.FRAXTAL]: fraxtalContract,
+  [NETWORKS.WORLD]: worldContract,
+  [NETWORKS.MONAD]: monadContract,
 };

@@ -1,80 +1,99 @@
 import assert from "assert";
+import { deployScript, artifacts } from "@rocketh";
 
-import { type DeployFunction } from "hardhat-deploy/types";
-
-import { ConfigData } from "../utils/types";
-import { readFileSync } from "fs-extra";
-import { getWalletAddressFromConfig } from "../utils";
-
-import { BridgeableTokenP } from "../../typechain-types/contracts/tokens/BridgeableTokenP";
+import { Address, ConfigData } from "../utils/types";
+import { readFileSync } from "fs";
+import {
+  getWalletAddressFromConfig,
+  parseBridgeableTokenPConfig,
+} from "../utils";
 
 const contractName = "BridgeableTokenP";
 
 const token = "USDp";
 
-const deploy: DeployFunction = async (hre) => {
-  const { getNamedAccounts, deployments } = hre;
+export default deployScript(
+  async ({ namedAccounts, network, deploy, get }) => {
+    const { deployer } = namedAccounts;
+    const chainName = network.name.toLowerCase();
+    assert(deployer, "Missing named deployer account");
+    console.log(
+      `Network: ${chainName} \nDeployer: ${deployer} \nDeploying: ${contractName}`,
+    );
+    const config: ConfigData = JSON.parse(
+      readFileSync(`./deploy/config/${chainName}/config.json`).toString(),
+    );
 
-  const { deploy } = deployments;
-  const { deployer } = await getNamedAccounts();
+    const bridgeableTokenPConfig =
+      config.bridgeableTokenP[
+        token.toLowerCase() as keyof typeof config.bridgeableTokenP
+      ];
 
-  assert(deployer, "Missing named deployer account");
+    if (!bridgeableTokenPConfig) {
+      throw new Error(`BridgeableTokenP config not found for token: ${token}`);
+    }
 
-  console.log(`Network: ${hre.network.name}`);
-  console.log(`Deployer: ${deployer}`);
+    const {
+      dailyCreditLimit,
+      globalCreditLimit,
+      dailyDebitLimit,
+      globalDebitLimit,
+      feesRecipient,
+      feesRate,
+      isIsolateMode,
+    } = parseBridgeableTokenPConfig(bridgeableTokenPConfig);
+    const configParams = {
+      dailyCreditLimit,
+      globalCreditLimit,
+      dailyDebitLimit,
+      globalDebitLimit,
+      feesRecipient: getWalletAddressFromConfig(feesRecipient, config),
+      feesRate,
+      isIsolateMode,
+    };
 
-  const config: ConfigData = JSON.parse(
-    readFileSync(`./deploy/config/${hre.network.name}/config.json`).toString(),
-  );
+    console.log(`Deploying ${contractName}_${token}...`);
+    const endpointV2Deployment = get("EndpointV2");
 
-  const bridgeableTokenPConfig =
-    config.bridgeableTokenP[
-      token.toLowerCase() as keyof typeof config.bridgeableTokenP
-    ];
+    const principalTokenDeployment = get(
+      `TokenP_${bridgeableTokenPConfig.principalToken}`,
+    );
 
-  if (!bridgeableTokenPConfig) {
-    throw new Error(`BridgeableTokenP config not found for token: ${token}`);
-  }
-
-  const configParams: BridgeableTokenP.ConfigParamsStruct = {
-    dailyCreditLimit: bridgeableTokenPConfig.dailyCreditLimit,
-    globalCreditLimit: bridgeableTokenPConfig.globalCreditLimit,
-    dailyDebitLimit: bridgeableTokenPConfig.dailyDebitLimit,
-    globalDebitLimit: bridgeableTokenPConfig.globalDebitLimit,
-    feesRecipient: getWalletAddressFromConfig(
-      bridgeableTokenPConfig.feesRecipient,
-      config,
-    ),
-    feesRate: bridgeableTokenPConfig.feesRate,
-    isIsolateMode: bridgeableTokenPConfig.isIsolateMode,
-  };
-
-  console.log(`Deploying ${contractName}_${token}...`);
-  const endpointV2Deployment = await hre.deployments.get("EndpointV2");
-  const principalTokenDeployment = await hre.deployments.get(
-    `TokenP_${bridgeableTokenPConfig.principalToken}`,
-  );
-
-  const bridgeableTokenP = await deploy(`${contractName}_${token}`, {
-    contract: contractName,
-    from: deployer,
-    args: [
+    const args: [
+      string,
+      string,
+      Address,
+      Address,
+      Address,
+      typeof configParams,
+    ] = [
       bridgeableTokenPConfig.lzName,
       bridgeableTokenPConfig.lzSymbol,
       principalTokenDeployment.address,
       endpointV2Deployment.address,
       deployer,
       configParams,
-    ],
-    log: true,
-    skipIfAlreadyDeployed: false,
-  });
+    ];
 
-  console.log(
-    `Deployed contract: ${contractName}_${token}, network: ${hre.network.name}, address: ${bridgeableTokenP.address}`,
-  );
-};
+    const bridgeableTokenP = await deploy(
+      `${contractName}_${token}`,
+      {
+        artifact: artifacts.BridgeableTokenP,
+        account: deployer,
+        args,
+      },
+      {
+        linkedData: {
+          args,
+        },
+      },
+    );
 
-deploy.tags = [contractName];
-
-export default deploy;
+    console.log(
+      `Deployed contract: ${contractName}_${token}, network: ${chainName}, address: ${bridgeableTokenP.address}`,
+    );
+  },
+  {
+    tags: [contractName],
+  },
+);

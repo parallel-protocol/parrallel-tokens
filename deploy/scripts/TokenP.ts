@@ -1,60 +1,63 @@
 import assert from "assert";
-
-import { type DeployFunction } from "hardhat-deploy/types";
+import { deployScript, artifacts } from "@rocketh";
 
 import { ConfigData } from "../utils/types";
-import { readFileSync } from "fs-extra";
+import { readFileSync } from "fs";
 import { checkAddressValid } from "../utils";
 
 const contractName = "TokenP";
 
 const token = "USDp";
 
-const deploy: DeployFunction = async (hre) => {
-  const { getNamedAccounts, deployments } = hre;
+export default deployScript(
+  async ({ namedAccounts, network, deployViaProxy }) => {
+    const { deployer } = namedAccounts;
+    const chainName = network.name.toLowerCase();
+    assert(deployer, "Missing named deployer account");
+    console.log(
+      `Network: ${chainName} \nDeployer: ${deployer} \nDeploying: ${contractName}`,
+    );
 
-  const { deploy } = deployments;
-  const { deployer } = await getNamedAccounts();
+    const config: ConfigData = JSON.parse(
+      readFileSync(`./deploy/config/${chainName}/config.json`).toString(),
+    );
 
-  assert(deployer, "Missing named deployer account");
+    const { name, symbol } =
+      config.tokens[token.toLowerCase() as keyof typeof config.tokens];
+    if (!name || !symbol) throw new Error(`Token ${token} not found in config`);
 
-  console.log(`Network: ${hre.network.name}`);
-  console.log(`Deployer: ${deployer}`);
+    const accessManager = checkAddressValid(
+      config.accessManager,
+      "access manager",
+    );
 
-  const config: ConfigData = JSON.parse(
-    readFileSync(`./deploy/config/${hre.network.name}/config.json`).toString(),
-  );
+    console.log(`Deploying ${contractName}_${token}...`);
 
-  const { name, symbol } =
-    config.tokens[token.toLowerCase() as keyof typeof config.tokens];
-  if (!name || !symbol) throw new Error(`Token ${token} not found in config`);
+    const args = [name, symbol, accessManager];
 
-  const accessManager = checkAddressValid(
-    config.accessManager,
-    "access manager",
-  );
-
-  console.log(`Deploying ${contractName}_${token}...`);
-
-  const tokenP = await deploy(`${contractName}_${token}`, {
-    contract: contractName,
-    from: deployer,
-    proxy: {
-      proxyContract: "UUPS",
-      execute: {
-        methodName: "initialize",
-        args: [name, symbol, accessManager],
+    const tokenP = await deployViaProxy(
+      `${contractName}_testUSDp`,
+      {
+        account: deployer,
+        artifact: artifacts.TokenP as any,
       },
-    },
-    log: true,
-    skipIfAlreadyDeployed: false,
-  });
+      {
+        proxyContract: "UUPS",
+        execute: {
+          methodName: "initialize",
+          args,
+        },
+        linkedData: {
+          args,
+        },
+      },
+    );
 
-  console.log(
-    `Deployed contract: ${contractName}_${token}, network: ${hre.network.name}, address: ${tokenP.address}`,
-  );
-};
-
-deploy.tags = [contractName];
-
-export default deploy;
+    console.log(
+      `Deployed contract: ${contractName}_${token}, network: ${chainName}, address: ${tokenP.address}`,
+    );
+  },
+  {
+    tags: [contractName],
+  },
+);

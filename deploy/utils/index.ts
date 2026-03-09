@@ -1,5 +1,5 @@
-import { ethers } from "ethers";
-import { Address, ConfigData } from "./types";
+import { BigNumber, BigNumber, ethers } from "ethers";
+import { Address, BridgeableTokenPConfig, ConfigData } from "./types";
 import { EndpointId } from "@layerzerolabs/lz-definitions";
 
 export const getLzEidReceiver = (mainchain: string) => {
@@ -48,4 +48,16 @@ export const isAddressValid = (address: string) => {
   return (
     ethers.utils.isAddress(address) && ethers.constants.AddressZero !== address
   );
+};
+
+export const parseBridgeableTokenPConfig = (config: BridgeableTokenPConfig) => {
+  return {
+    dailyCreditLimit: BigInt(config.dailyCreditLimit),
+    globalCreditLimit: BigInt(config.globalCreditLimit),
+    dailyDebitLimit: BigInt(config.dailyDebitLimit),
+    globalDebitLimit: BigInt(config.globalDebitLimit),
+    feesRecipient: config.feesRecipient,
+    feesRate: config.feesRate,
+    isIsolateMode: config.isIsolateMode,
+  };
 };
