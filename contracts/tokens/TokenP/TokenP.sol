@@ -5,10 +5,10 @@ import {AccessManagedUpgradeable} from "@openzeppelin/contracts-upgradeable/acce
 import {ERC20PermitUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-import {ITokenP, IERC20Permit} from "contracts/interfaces/ITokenP.sol";
+import {ITokenP, IERC20Permit, IEIP3009} from "contracts/interfaces/ITokenP.sol";
 import {CommonErrorsLib } from "contracts/libraries/CommonErrorsLib.sol";
 
-
+import {EIP3009} from "./EIP3009.sol";
 import {TokenP_EventsLib as EventsLib} from "./EventsLib.sol";
 import {TokenP_ErrorsLib as ErrorsLib} from "./ErrorsLib.sol";
 
@@ -18,7 +18,7 @@ import {TokenP_ErrorsLib as ErrorsLib} from "./ErrorsLib.sol";
 /// @custom:contact security@cooperlabs.xyz
 /// @notice Base contract for Parallel Tokens (TokenP)
 /// @dev By default, TokenP are ERC-20 tokens with 18 decimals
-contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UUPSUpgradeable {
+contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UUPSUpgradeable, EIP3009 {
      //-------------------------------------------
     // Storage
     //-------------------------------------------
@@ -90,5 +90,84 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     /// @inheritdoc ERC20PermitUpgradeable
     function nonces(address owner) public view virtual override(ERC20PermitUpgradeable, IERC20Permit) returns (uint256) {
         return super.nonces(owner);
+    }
+
+    //-------------------------------------------
+    // EIP-3009 functions
+    //-------------------------------------------
+
+    /// @inheritdoc IEIP3009
+    function transferWithAuthorization(
+        address from,
+        address to,
+        uint256 value,
+        uint256 validAfter,
+        uint256 validBefore,
+        bytes32 nonce,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external {
+        _transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s);
+    }
+
+    /// @inheritdoc IEIP3009
+    function transferWithAuthorization(
+        address from,
+        address to,
+        uint256 value,
+        uint256 validAfter,
+        uint256 validBefore,
+        bytes32 nonce,
+        bytes calldata signature
+    ) external {
+        _transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, signature);
+    }
+
+    /// @inheritdoc IEIP3009
+    function receiveWithAuthorization(
+        address from,
+        address to,
+        uint256 value,
+        uint256 validAfter,
+        uint256 validBefore,
+        bytes32 nonce,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external {
+        _receiveWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s);
+    }
+
+    /// @inheritdoc IEIP3009
+    function receiveWithAuthorization(
+        address from,
+        address to,
+        uint256 value,
+        uint256 validAfter,
+        uint256 validBefore,
+        bytes32 nonce,
+        bytes calldata signature
+    ) external {
+        _receiveWithAuthorization(from, to, value, validAfter, validBefore, nonce, signature);
+    }
+
+    /// @inheritdoc IEIP3009
+    function cancelAuthorization(address authorizer, bytes32 nonce, uint8 v, bytes32 r, bytes32 s) external {
+        _cancelAuthorization(authorizer, nonce, v, r, s);
+    }
+
+    /// @inheritdoc IEIP3009
+    function cancelAuthorization(address authorizer, bytes32 nonce, bytes calldata signature) external {
+        _cancelAuthorization(authorizer, nonce, signature);
+    }
+
+    //-------------------------------------------
+    // Required overrides
+    //-------------------------------------------
+
+    // solhint-disable-next-line func-name-mixedcase
+    function DOMAIN_SEPARATOR() external view override(ERC20PermitUpgradeable, EIP3009, IERC20Permit) returns (bytes32) {
+        return _domainSeparator();
     }
 }
