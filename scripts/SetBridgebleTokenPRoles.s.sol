@@ -10,7 +10,7 @@ import { OAppCore } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppCore.
 import { BridgeableTokenP } from "contracts/tokens/BridgeableTokenP/BridgeableTokenP.sol";
 
 contract SetBridgebleTokenPRoles is BaseScript {
-    address bridgeableTokenP = 0x72b089bD4386E5B4eB1485a6c913c14F75a24657;
+    address bridgeableTokenP = 0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7;
 
     function run() public broadcast {
         bytes4[] memory guardianSelectors = new bytes4[](10);

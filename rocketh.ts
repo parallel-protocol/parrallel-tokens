@@ -38,8 +38,8 @@ import artifacts from "./generated/artifacts";
 export { artifacts };
 // ------------------------------------------------------------------------------------------------
 // we create the rocketh function we need by passing the extensions
-import { setup } from "rocketh";
-const { deployScript, loadAndExecuteDeployments } = setup<
+import { setupDeployScripts } from "rocketh";
+const { deployScript } = setupDeployScripts<
   typeof extensions,
   typeof config.accounts,
   typeof config.data
@@ -51,4 +51,4 @@ import { setupHardhatDeploy } from "hardhat-deploy/helpers";
 const { loadEnvironmentFromHardhat } = setupHardhatDeploy(extensions);
 // ------------------------------------------------------------------------------------------------
 // finally we export them
-export { loadAndExecuteDeployments, deployScript, loadEnvironmentFromHardhat };
+export { deployScript, loadEnvironmentFromHardhat };

@@ -122,6 +122,46 @@ const config: HardhatUserConfig = {
       url: getRpcURL("hyperevm"),
       accounts,
     },
+    xlayer: {
+      type: "http",
+      url: getRpcURL("xlayer"),
+      accounts,
+    },
+    plume: {
+      type: "http",
+      url: getRpcURL("plume"),
+      accounts,
+    },
+    plasma: {
+      type: "http",
+      url: getRpcURL("plasma"),
+      accounts,
+    },
+    linea: {
+      type: "http",
+      url: getRpcURL("linea"),
+      accounts,
+    },
+    katana: {
+      type: "http",
+      url: getRpcURL("katana"),
+      accounts,
+    },
+    fraxtal: {
+      type: "http",
+      url: getRpcURL("fraxtal"),
+      accounts,
+    },
+    worldchain: {
+      type: "http",
+      url: getRpcURL("worldchain"),
+      accounts,
+    },
+    hemi: {
+      type: "http",
+      url: getRpcURL("hemi"),
+      accounts,
+    },
   },
 };
 

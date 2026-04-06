@@ -66,7 +66,7 @@ export const getRpcURL = (network: string): string => {
       return `https://rpc.plume.org`;
     }
     case "xlayer": {
-      return `https://rpc.ankr.com/xlayer`;
+      return `https://rpc.xlayer.tech`;
     }
     case "plasma": {
       return `https://plasma-mainnet.g.alchemy.com/v2/${apiKey}`;
@@ -78,19 +78,16 @@ export const getRpcURL = (network: string): string => {
       return `https://rpc.katana.network`;
     }
     case "fraxtal": {
-      return `https://frax-mainnet.g.alchemy.com/v2/${apiKey}`;
+      return `https://fraxtal.api.pocket.network`;
     }
-    case "world": {
+    case "worldchain": {
       return `https://worldchain-mainnet.g.alchemy.com/v2/${apiKey}`;
     }
     case "monad": {
       return `https://rpc.ankr.com/monad`;
     }
-    case "plume": {
-      return `https://rpc.plume.org`;
-    }
     case "hemi": {
-      return `https://hemi.drpc.org`;
+      return `https://rpc.hemi.network/rpc`;
     }
     default: {
       throw new Error(`${network} Network RPC not configured`);
