@@ -10,9 +10,10 @@ const contractName = "TokenP";
 const token = "USDp";
 
 export default deployScript(
-  async ({ namedAccounts, network, deployViaProxy }) => {
+  async ({ namedAccounts, name: networkName, deployViaProxy }) => {
     const { deployer } = namedAccounts;
-    const chainName = network.name.toLowerCase();
+    const chainName = networkName;
+
     assert(deployer, "Missing named deployer account");
     console.log(
       `Network: ${chainName} \nDeployer: ${deployer} \nDeploying: ${contractName}`,
@@ -36,7 +37,7 @@ export default deployScript(
     const args = [name, symbol, accessManager];
 
     const tokenP = await deployViaProxy(
-      `${contractName}_testUSDp`,
+      `${contractName}_${token}`,
       {
         account: deployer,
         artifact: artifacts.TokenP as any,

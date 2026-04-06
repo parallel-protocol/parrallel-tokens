@@ -5,6 +5,7 @@ import { Address, ConfigData } from "../utils/types";
 import { readFileSync } from "fs";
 import {
   getWalletAddressFromConfig,
+  getLzEndpointV2Address,
   parseBridgeableTokenPConfig,
 } from "../utils";
 
@@ -13,9 +14,9 @@ const contractName = "BridgeableTokenP";
 const token = "USDp";
 
 export default deployScript(
-  async ({ namedAccounts, network, deploy, get }) => {
+  async ({ namedAccounts, name: networkName, deploy, get }) => {
     const { deployer } = namedAccounts;
-    const chainName = network.name.toLowerCase();
+    const chainName = networkName;
     assert(deployer, "Missing named deployer account");
     console.log(
       `Network: ${chainName} \nDeployer: ${deployer} \nDeploying: ${contractName}`,
@@ -53,8 +54,8 @@ export default deployScript(
     };
 
     console.log(`Deploying ${contractName}_${token}...`);
-    const endpointV2Deployment = get("EndpointV2");
-
+    const endpointV2Address = getLzEndpointV2Address(chainName);
+    console.log(`Endpoint v2 address: ${endpointV2Address}`);
     const principalTokenDeployment = get(
       `TokenP_${bridgeableTokenPConfig.principalToken}`,
     );
@@ -70,7 +71,7 @@ export default deployScript(
       bridgeableTokenPConfig.lzName,
       bridgeableTokenPConfig.lzSymbol,
       principalTokenDeployment.address,
-      endpointV2Deployment.address,
+      endpointV2Address,
       deployer,
       configParams,
     ];

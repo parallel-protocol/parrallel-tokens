@@ -7,7 +7,7 @@ import { UUPSUpgradeable } from "@openzeppelin/contracts/proxy/utils/UUPSUpgrade
 import { TokenP } from "contracts/tokens/TokenP/TokenP.sol";
 
 contract SetTokenPRoles is BaseScript {
-    address tokenP = 0xA8FE9843B4Cc2aAB136209B49E2c3E2A7ebD5CFA;
+    address tokenP = 0x8fCf9118fdD359f6277cDd143c2Da206e64140F3;
 
     function run() public broadcast {
         bytes4[] memory minterSelectors = new bytes4[](3);

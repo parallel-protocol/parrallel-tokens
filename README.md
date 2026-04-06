@@ -152,6 +152,70 @@ This repository contains all the contracts of Parallel Tokens with associated co
 | FlashParallelToken | [0x76A9A0062ec6712b99B4f63bD2b4270185759dd5](https://explorer.tac.build/address/0x76A9A0062ec6712b99B4f63bD2b4270185759dd5) |
 | BridgeableUSDp     | [0xB3DbecE41acDD6aD76d037b8Da2e53C58826746c](https://explorer.tac.build/address/0xB3DbecE41acDD6aD76d037b8Da2e53C58826746c) |
 
+#### Plasma
+
+| Contract           | Explore                                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0xC2f8B5d893217462aE9c9879c9285A5a3AAbcb8F](https://plasmascan.to/address/0xC2f8B5d893217462aE9c9879c9285A5a3AAbcb8F) |
+| FlashParallelToken | [0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2](https://plasmascan.to/address/0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2) |
+| BridgeableUSDp     | [0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7](https://plasmascan.to/address/0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7) |
+
+#### xLayer
+
+| Contract           | Explore                                                                                                                            |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x8fCf9118fdD359f6277cDd143c2Da206e64140F3](https://www.oklink.com/fr/x-layer/address/0x8fCf9118fdD359f6277cDd143c2Da206e64140F3) |
+| FlashParallelToken | [0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2](https://www.oklink.com/fr/x-layer/address/0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2) |
+| BridgeableUSDp     | [0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7](https://www.oklink.com/fr/x-layer/address/0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7) |
+
+#### Plume
+
+| Contract           | Explore                                                                                                                     |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x8fCf9118fdD359f6277cDd143c2Da206e64140F3](https://explorer.plume.org/address/0x8fCf9118fdD359f6277cDd143c2Da206e64140F3) |
+| FlashParallelToken | [0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2](https://explorer.plume.org/address/0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2) |
+| BridgeableUSDp     | [0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7](https://explorer.plume.org/address/0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7) |
+
+#### Katana
+
+| Contract           | Explore                                                                                                                 |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x8fCf9118fdD359f6277cDd143c2Da206e64140F3](https://katanascan.com/address/0x8fCf9118fdD359f6277cDd143c2Da206e64140F3) |
+| FlashParallelToken | [0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2](https://katanascan.com/address/0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2) |
+| BridgeableUSDp     | [0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7](https://katanascan.com/address/0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7) |
+
+#### Fraxtal
+
+| Contract           | Explore                                                                                                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x8fCf9118fdD359f6277cDd143c2Da206e64140F3](https://fraxscan.com/address/0x8fCf9118fdD359f6277cDd143c2Da206e64140F3) |
+| FlashParallelToken | [0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2](https://fraxscan.com/address/0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2) |
+| BridgeableUSDp     | [0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7](https://fraxscan.com/address/0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7) |
+
+#### Linea
+
+| Contract           | Explore                                                                                                                  |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| USDp               | [0x8fCf9118fdD359f6277cDd143c2Da206e64140F3](https://lineascan.build/address/0x8fCf9118fdD359f6277cDd143c2Da206e64140F3) |
+| FlashParallelToken | [0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2](https://lineascan.build/address/0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2) |
+| BridgeableUSDp     | [0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7](https://lineascan.build/address/0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7) |
+
+#### Hemi
+
+| Contract           | Explore                                                                                                                    |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x8fCf9118fdD359f6277cDd143c2Da206e64140F3](https://explorer.hemi.xyz/address/0x8fCf9118fdD359f6277cDd143c2Da206e64140F3) |
+| FlashParallelToken | [0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2](https://explorer.hemi.xyz/address/0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2) |
+| BridgeableUSDp     | [0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7](https://explorer.hemi.xyz/address/0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7) |
+
+#### Worldchain
+
+| Contract           | Explore                                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| USDp               | [0x8fCf9118fdD359f6277cDd143c2Da206e64140F3](https://worldscan.org/address/0x8fCf9118fdD359f6277cDd143c2Da206e64140F3) |
+| FlashParallelToken | [0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2](https://worldscan.org/address/0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2) |
+| BridgeableUSDp     | [0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7](https://worldscan.org/address/0x9E79eC4BC3574f2865636aECFF44B60A723A9eE7) |
+
 ### Testnet
 
 #### Sepolia

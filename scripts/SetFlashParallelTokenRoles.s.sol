@@ -7,7 +7,7 @@ import { UUPSUpgradeable } from "@openzeppelin/contracts/proxy/utils/UUPSUpgrade
 import { FlashParallelToken } from "contracts/flashloan/FlashParallelToken.sol";
 
 contract SetFlashParallelTokenRoles is BaseScript {
-    address flashParallelToken = 0xFB545bA71f0083ec8BAb965b7FdB9a88E4093e07;
+    address flashParallelToken = 0x46B053Ce47F16390574Bb8f54cAccd04C1E3Faf2;
 
     function run() public broadcast {
         bytes4[] memory governorSelectors = new bytes4[](4);

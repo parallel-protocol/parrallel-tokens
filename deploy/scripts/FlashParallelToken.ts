@@ -8,9 +8,16 @@ import { checkAddressValid, getWalletAddressFromConfig } from "../utils";
 const contractName = "FlashParallelToken";
 
 export default deployScript(
-  async ({ namedAccounts, network, deployViaProxy }) => {
+  async ({
+    namedAccounts,
+    name: networkName,
+    network,
+    deployViaProxy,
+    viem,
+    get,
+  }) => {
     const { deployer } = namedAccounts;
-    const chainName = network.name.toLowerCase();
+    const chainName = networkName;
     assert(deployer, "Missing named deployer account");
     console.log(
       `Network: ${chainName} \nDeployer: ${deployer} \nDeploying: ${contractName}`,
@@ -29,6 +36,8 @@ export default deployScript(
       config.flashParallelToken.feeRecipient,
       config,
     );
+
+    const principalTokenDeployment = get(`TokenP_USDp`);
 
     console.log(`Deploying ${contractName}...`);
 
@@ -51,6 +60,20 @@ export default deployScript(
         },
       },
     );
+
+    await viem.walletClient.writeContract({
+      chain: network.chain,
+      account: deployer,
+      address: flashParallelToken.address,
+      abi: artifacts.FlashParallelToken.abi,
+      functionName: "setFlashLoanParameters",
+      args: [
+        principalTokenDeployment.address,
+        0,
+        100000000000000000000000n,
+        true,
+      ],
+    });
 
     console.log(
       `Deployed contract: ${contractName}, network: ${chainName}, address: ${flashParallelToken.address}`,
