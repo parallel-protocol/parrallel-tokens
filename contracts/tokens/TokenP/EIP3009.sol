@@ -11,8 +11,7 @@ import { IEIP3009 } from "contracts/interfaces/external/IEIP3009.sol";
 /// @author Cooper Labs
 /// @custom:contact security@cooperlabs.xyz
 /// @notice Abstract implementation of EIP-3009: Transfer With Authorization
-/// @dev Provides internal implementations that inheriting contracts must wrap with public functions.
-/// Supports both EOA (v,r,s) and smart contract wallet (EIP-1271) signatures.
+/// @dev Supports both EOA (v,r,s) and smart contract wallet (EIP-1271) signatures.
 /// The EIP-712 domain separator is computed dynamically from `name()` so no initialization is required.
 abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
   // keccak256("TransferWithAuthorization(address from,address to,
@@ -71,10 +70,11 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
   }
 
   /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    INTERNAL FUNCTIONS
+    EXTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
-  function _transferWithAuthorization(
+  /// @inheritdoc IEIP3009
+  function transferWithAuthorization(
     address from,
     address to,
     uint256 value,
@@ -85,12 +85,13 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     bytes32 r,
     bytes32 s
   )
-    internal
+    external
   {
-    _transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, abi.encodePacked(r, s, v));
+    transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, abi.encodePacked(r, s, v));
   }
 
-  function _transferWithAuthorization(
+  /// @inheritdoc IEIP3009
+  function transferWithAuthorization(
     address from,
     address to,
     uint256 value,
@@ -99,7 +100,7 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     bytes32 nonce,
     bytes memory signature
   )
-    internal
+    public
   {
     _requireValidAuthorization(from, nonce, validAfter, validBefore);
     _requireValidSignature(
@@ -111,7 +112,8 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     _transfer(from, to, value);
   }
 
-  function _receiveWithAuthorization(
+  /// @inheritdoc IEIP3009
+  function receiveWithAuthorization(
     address from,
     address to,
     uint256 value,
@@ -122,12 +124,13 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     bytes32 r,
     bytes32 s
   )
-    internal
+    external
   {
-    _receiveWithAuthorization(from, to, value, validAfter, validBefore, nonce, abi.encodePacked(r, s, v));
+    receiveWithAuthorization(from, to, value, validAfter, validBefore, nonce, abi.encodePacked(r, s, v));
   }
 
-  function _receiveWithAuthorization(
+  /// @inheritdoc IEIP3009
+  function receiveWithAuthorization(
     address from,
     address to,
     uint256 value,
@@ -136,7 +139,7 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     bytes32 nonce,
     bytes memory signature
   )
-    internal
+    public
   {
     if (to != msg.sender) revert CallerMustBePayee();
     _requireValidAuthorization(from, nonce, validAfter, validBefore);
@@ -149,11 +152,13 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     _transfer(from, to, value);
   }
 
-  function _cancelAuthorization(address authorizer, bytes32 nonce, uint8 v, bytes32 r, bytes32 s) internal {
-    _cancelAuthorization(authorizer, nonce, abi.encodePacked(r, s, v));
+  /// @inheritdoc IEIP3009
+  function cancelAuthorization(address authorizer, bytes32 nonce, uint8 v, bytes32 r, bytes32 s) external {
+    cancelAuthorization(authorizer, nonce, abi.encodePacked(r, s, v));
   }
 
-  function _cancelAuthorization(address authorizer, bytes32 nonce, bytes memory signature) internal {
+  /// @inheritdoc IEIP3009
+  function cancelAuthorization(address authorizer, bytes32 nonce, bytes memory signature) public {
     _requireUnusedAuthorization(authorizer, nonce);
     _requireValidSignature(
       authorizer,
