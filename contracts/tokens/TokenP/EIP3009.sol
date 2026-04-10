@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
 import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -86,8 +86,9 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     bytes32 s
   )
     external
+    virtual
   {
-    transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, abi.encodePacked(r, s, v));
+    _transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, abi.encodePacked(r, s, v));
   }
 
   /// @inheritdoc IEIP3009
@@ -100,16 +101,10 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     bytes32 nonce,
     bytes memory signature
   )
-    public
+    external
+    virtual
   {
-    _requireValidAuthorization(from, nonce, validAfter, validBefore);
-    _requireValidSignature(
-      from,
-      keccak256(abi.encode(TRANSFER_WITH_AUTHORIZATION_TYPEHASH, from, to, value, validAfter, validBefore, nonce)),
-      signature
-    );
-    _markAuthorizationAsUsed(from, nonce);
-    _transfer(from, to, value);
+    _transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, signature);
   }
 
   /// @inheritdoc IEIP3009
@@ -125,8 +120,9 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     bytes32 s
   )
     external
+    virtual
   {
-    receiveWithAuthorization(from, to, value, validAfter, validBefore, nonce, abi.encodePacked(r, s, v));
+    _receiveWithAuthorization(from, to, value, validAfter, validBefore, nonce, abi.encodePacked(r, s, v));
   }
 
   /// @inheritdoc IEIP3009
@@ -139,7 +135,63 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     bytes32 nonce,
     bytes memory signature
   )
-    public
+    external
+    virtual
+  {
+    _receiveWithAuthorization(from, to, value, validAfter, validBefore, nonce, signature);
+  }
+
+  /// @inheritdoc IEIP3009
+  function cancelAuthorization(address authorizer, bytes32 nonce, uint8 v, bytes32 r, bytes32 s) external virtual {
+    _cancelAuthorization(authorizer, nonce, abi.encodePacked(r, s, v));
+  }
+
+  /// @inheritdoc IEIP3009
+  function cancelAuthorization(address authorizer, bytes32 nonce, bytes memory signature) external virtual {
+    _cancelAuthorization(authorizer, nonce, signature);
+  }
+
+  /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    INTERNAL LOGIC
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+  /// @notice Executes the core logic of an EIP-3009 transfer with authorization.
+  /// @dev Inheriting contracts can call this to reuse the EIP-3009 authorization + transfer flow
+  /// (for example, a contract that is itself EIP-3009 and wraps an EIP-3009 underlying).
+  function _transferWithAuthorization(
+    address from,
+    address to,
+    uint256 value,
+    uint256 validAfter,
+    uint256 validBefore,
+    bytes32 nonce,
+    bytes memory signature
+  )
+    internal
+  {
+    _requireValidAuthorization(from, nonce, validAfter, validBefore);
+    _requireValidSignature(
+      from,
+      keccak256(abi.encode(TRANSFER_WITH_AUTHORIZATION_TYPEHASH, from, to, value, validAfter, validBefore, nonce)),
+      signature
+    );
+    _markAuthorizationAsUsed(from, nonce);
+    _transfer(from, to, value);
+  }
+
+  /// @notice Executes the core logic of an EIP-3009 receive with authorization.
+  /// @dev Enforces that `msg.sender` is the payee (`to`), then runs the standard authorization + transfer flow.
+  /// Inheriting contracts can call this to reuse the logic.
+  function _receiveWithAuthorization(
+    address from,
+    address to,
+    uint256 value,
+    uint256 validAfter,
+    uint256 validBefore,
+    bytes32 nonce,
+    bytes memory signature
+  )
+    internal
   {
     if (to != msg.sender) revert CallerMustBePayee();
     _requireValidAuthorization(from, nonce, validAfter, validBefore);
@@ -152,13 +204,9 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
     _transfer(from, to, value);
   }
 
-  /// @inheritdoc IEIP3009
-  function cancelAuthorization(address authorizer, bytes32 nonce, uint8 v, bytes32 r, bytes32 s) external {
-    cancelAuthorization(authorizer, nonce, abi.encodePacked(r, s, v));
-  }
-
-  /// @inheritdoc IEIP3009
-  function cancelAuthorization(address authorizer, bytes32 nonce, bytes memory signature) public {
+  /// @notice Executes the core logic of an EIP-3009 cancel authorization.
+  /// @dev Inheriting contracts can call this to reuse the cancel flow.
+  function _cancelAuthorization(address authorizer, bytes32 nonce, bytes memory signature) internal {
     _requireUnusedAuthorization(authorizer, nonce);
     _requireValidSignature(
       authorizer,
@@ -170,7 +218,7 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
   }
 
   /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    PRIVATE HELPERS
+    INTERNAL HELPERS
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
   function _domainSeparator() internal view returns (bytes32) {
@@ -181,7 +229,7 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
 
   function _requireValidSignature(
     address signer, bytes32 dataHash, bytes memory signature
-  ) private view {
+  ) internal view {
     bytes32 digest = MessageHashUtils.toTypedDataHash(_domainSeparator(), dataHash);
     if (!SignatureChecker.isValidSignatureNow(signer, digest, signature)) {
       revert InvalidSignature();
@@ -190,17 +238,17 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
 
   function _requireValidAuthorization(
     address authorizer, bytes32 nonce, uint256 validAfter, uint256 validBefore
-  ) private view {
+  ) internal view {
     if (block.timestamp <= validAfter) revert AuthorizationNotYetValid();
     if (block.timestamp >= validBefore) revert AuthorizationExpired();
     _requireUnusedAuthorization(authorizer, nonce);
   }
 
-  function _requireUnusedAuthorization(address authorizer, bytes32 nonce) private view {
+  function _requireUnusedAuthorization(address authorizer, bytes32 nonce) internal view {
     if (_getEIP3009Storage().authorizationStates[authorizer][nonce]) revert AuthorizationAlreadyUsed(nonce);
   }
 
-  function _markAuthorizationAsUsed(address authorizer, bytes32 nonce) private {
+  function _markAuthorizationAsUsed(address authorizer, bytes32 nonce) internal {
     _getEIP3009Storage().authorizationStates[authorizer][nonce] = true;
     emit AuthorizationUsed(authorizer, nonce);
   }

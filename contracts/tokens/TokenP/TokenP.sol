@@ -79,7 +79,6 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     // Restricted functions
     //-------------------------------------------
 
-
     /// @inheritdoc UUPSUpgradeable
     function _authorizeUpgrade(address newImplementation) internal virtual override restricted {}
 
