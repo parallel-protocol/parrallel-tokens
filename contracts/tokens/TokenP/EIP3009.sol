@@ -38,6 +38,14 @@ abstract contract EIP3009 is ERC20Upgradeable, IEIP3009 {
   //keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
   bytes32 private constant EIP712_DOMAIN_TYPEHASH = 0x8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f;
 
+  /// @dev EIP-712 domain version, hardcoded to "1" and baked into bytecode.
+  /// UPGRADE INVARIANT: any contract inheriting both this module and `ERC20PermitUpgradeable`
+  /// (e.g. `TokenP`) must keep this constant in sync with `EIP712Storage.$._version` (read by
+  /// OZ `EIP712Upgradeable`). If a future reinitializer bumps the EIP-712 version via
+  /// `__EIP712_init_unchained(name_, "N")`, a new implementation MUST be deployed with
+  /// `VERSION_HASH = keccak256(bytes("N"))`. Failing to update both sources silently breaks
+  /// either `permit()` (ERC-2612) or EIP-3009 signature verification, as the public
+  /// `DOMAIN_SEPARATOR()` would diverge from the domain used by `permit`.
   bytes32 private constant VERSION_HASH = keccak256(bytes("1"));
 
   /// @custom:storage-location erc7201:cooperlabs.storage.EIP3009
