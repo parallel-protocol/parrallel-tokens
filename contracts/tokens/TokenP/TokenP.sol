@@ -31,7 +31,9 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     //-------------------------------------------
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() initializer {}
+    constructor() {
+        _disableInitializers();
+    }
 
     /// @notice Initializes the contract
     function initialize(string memory name_, string memory symbol_, address _accessManager) external initializer {
