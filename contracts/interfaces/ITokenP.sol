@@ -3,13 +3,14 @@ pragma solidity 0.8.28;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
+import {IEIP3009} from "contracts/interfaces/external/IEIP3009.sol";
 
 /// @title ITokenP
 /// @author Cooper Labs
 /// @custom:contact security@cooperlabs.xyz
 /// @notice Interface for the stablecoins `TokenP` contracts
 /// @dev This interface only contains functions of the `TokenP` contract which are called by other contracts.
-interface ITokenP is IERC20, IERC20Permit {
+interface ITokenP is IERC20, IERC20Permit, IEIP3009 {
     /// @notice Allow whitelisted contract to mint TokenP
     /// @param account Address to mint to
     /// @param amount Amount to mint

@@ -8,7 +8,7 @@ import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/U
 import {ITokenP, IERC20Permit} from "contracts/interfaces/ITokenP.sol";
 import {CommonErrorsLib } from "contracts/libraries/CommonErrorsLib.sol";
 
-
+import {EIP3009} from "./EIP3009.sol";
 import {TokenP_EventsLib as EventsLib} from "./EventsLib.sol";
 import {TokenP_ErrorsLib as ErrorsLib} from "./ErrorsLib.sol";
 
@@ -18,7 +18,7 @@ import {TokenP_ErrorsLib as ErrorsLib} from "./ErrorsLib.sol";
 /// @custom:contact security@cooperlabs.xyz
 /// @notice Base contract for Parallel Tokens (TokenP)
 /// @dev By default, TokenP are ERC-20 tokens with 18 decimals
-contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UUPSUpgradeable {
+contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UUPSUpgradeable, EIP3009 {
      //-------------------------------------------
     // Storage
     //-------------------------------------------
@@ -31,7 +31,9 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     //-------------------------------------------
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() initializer {}
+    constructor() {
+        _disableInitializers();
+    }
 
     /// @notice Initializes the contract
     function initialize(string memory name_, string memory symbol_, address _accessManager) external initializer {
@@ -79,7 +81,6 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     // Restricted functions
     //-------------------------------------------
 
-
     /// @inheritdoc UUPSUpgradeable
     function _authorizeUpgrade(address newImplementation) internal virtual override restricted {}
 
@@ -90,5 +91,14 @@ contract TokenP is ITokenP, ERC20PermitUpgradeable, AccessManagedUpgradeable, UU
     /// @inheritdoc ERC20PermitUpgradeable
     function nonces(address owner) public view virtual override(ERC20PermitUpgradeable, IERC20Permit) returns (uint256) {
         return super.nonces(owner);
+    }
+
+    //-------------------------------------------
+    // Required overrides
+    //-------------------------------------------
+
+    // solhint-disable-next-line func-name-mixedcase
+    function DOMAIN_SEPARATOR() external view override(ERC20PermitUpgradeable, EIP3009, IERC20Permit) returns (bytes32) {
+        return _domainSeparator();
     }
 }
