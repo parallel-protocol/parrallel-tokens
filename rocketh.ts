@@ -34,7 +34,7 @@ const extensions = {
 };
 // ------------------------------------------------------------------------------------------------
 // we re-export the artifacts, so they are easily available from the alias
-import artifacts from "./generated/artifacts";
+import * as artifacts from "./generated/artifacts/index.js";
 export { artifacts };
 // ------------------------------------------------------------------------------------------------
 // we create the rocketh function we need by passing the extensions
