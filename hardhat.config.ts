@@ -142,6 +142,11 @@ const config: HardhatUserConfig = {
       url: getRpcURL("linea"),
       accounts,
     },
+    tac: {
+      type: "http",
+      url: getRpcURL("tac"),
+      accounts,
+    },
     katana: {
       type: "http",
       url: getRpcURL("katana"),
