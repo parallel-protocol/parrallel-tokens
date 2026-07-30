@@ -16,6 +16,7 @@ venv
 build
 export
 **/artifacts
+generated/abis
 .openzeppelin
 lcov.info
 docgen/docs
