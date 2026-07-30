@@ -1,6 +1,8 @@
-import { ethers } from "ethers";
-import { Address, ConfigData } from "./types";
+import { BigNumber, BigNumber, ethers } from "ethers";
+import { Address, BridgeableTokenPConfig, ConfigData } from "./types";
 import { EndpointId } from "@layerzerolabs/lz-definitions";
+import { readFileSync } from "fs";
+import path from "path";
 
 export const getLzEidReceiver = (mainchain: string) => {
   if (mainchain === "sepolia") return EndpointId.SEPOLIA_V2_TESTNET;
@@ -48,4 +50,58 @@ export const isAddressValid = (address: string) => {
   return (
     ethers.utils.isAddress(address) && ethers.constants.AddressZero !== address
   );
+};
+
+export const parseBridgeableTokenPConfig = (config: BridgeableTokenPConfig) => {
+  return {
+    dailyCreditLimit: BigInt(config.dailyCreditLimit),
+    globalCreditLimit: BigInt(config.globalCreditLimit),
+    dailyDebitLimit: BigInt(config.dailyDebitLimit),
+    globalDebitLimit: BigInt(config.globalDebitLimit),
+    feesRecipient: config.feesRecipient,
+    feesRate: config.feesRate,
+    isIsolateMode: config.isIsolateMode,
+  };
+};
+
+const LZ_NETWORK_MAP: Record<string, string> = {
+  mainnet: "ethereum-mainnet",
+  polygon: "polygon-mainnet",
+  arbitrum: "arbitrum-mainnet",
+  optimism: "optimism-mainnet",
+  base: "base-mainnet",
+  sonic: "sonic-mainnet",
+  sei: "sei-mainnet",
+  avalanche: "avalanche-mainnet",
+  bsc: "bsc-mainnet",
+  berachain: "bera-mainnet",
+  scroll: "scroll-mainnet",
+  gnosis: "gnosis-mainnet",
+  unichain: "unichain-mainnet",
+  ink: "ink-mainnet",
+  hyperevm: "hyperliquid-mainnet",
+  xlayer: "xlayer-mainnet",
+  plume: "plumephoenix-mainnet",
+  plasma: "plasma-mainnet",
+  linea: "zkconsensys-mainnet",
+  katana: "katana-mainnet",
+  fraxtal: "fraxtal-mainnet",
+  worldchain: "worldchain-mainnet",
+  hemi: "hemi-mainnet",
+};
+
+export const getLzEndpointV2Address = (networkName: string): Address => {
+  const lzNetworkName = LZ_NETWORK_MAP[networkName];
+  if (!lzNetworkName) {
+    throw new Error(
+      `No LayerZero network mapping found for "${networkName}"`,
+    );
+  }
+  const deploymentPath = path.resolve(
+    "node_modules/@layerzerolabs/lz-evm-sdk-v2/deployments",
+    lzNetworkName,
+    "EndpointV2.json",
+  );
+  const deployment = JSON.parse(readFileSync(deploymentPath).toString());
+  return deployment.address as Address;
 };

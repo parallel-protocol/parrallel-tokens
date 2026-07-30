@@ -1,5 +1,3 @@
-import type { BigNumberish } from "ethers";
-
 export type Address = `0x${string}`;
 
 export type DeployToken = {
@@ -11,10 +9,10 @@ export type BridgeableTokenPConfig = {
   lzName: string;
   lzSymbol: string;
   principalToken: string;
-  dailyCreditLimit: BigNumberish;
-  globalCreditLimit: BigNumberish;
-  dailyDebitLimit: BigNumberish;
-  globalDebitLimit: BigNumberish;
+  dailyCreditLimit: bigint;
+  globalCreditLimit: bigint;
+  dailyDebitLimit: bigint;
+  globalDebitLimit: bigint;
   feesRecipient: string;
   feesRate: number;
   isIsolateMode: boolean;

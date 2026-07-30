@@ -1,29 +1,27 @@
 import "dotenv/config";
 
-import "hardhat-deploy";
-import "@typechain/hardhat";
+import HardhatNodeTestRunner from "@nomicfoundation/hardhat-node-test-runner";
+import HardhatViem from "@nomicfoundation/hardhat-viem";
+import HardhatNetworkHelpers from "@nomicfoundation/hardhat-network-helpers";
+import HardhatKeystore from "@nomicfoundation/hardhat-keystore";
+import HardhatDeploy from "hardhat-deploy";
 
-import {
-  HardhatUserConfig,
-  HttpNetworkAccountsUserConfig,
-} from "hardhat/types";
+import { HardhatUserConfig } from "hardhat/types/config";
 
-import "@layerzerolabs/toolbox-hardhat";
-
-import { EndpointId } from "@layerzerolabs/lz-definitions";
 import { getRpcURL } from "./utils/getRpcURL";
-import { getVerifyConfig } from "./utils/getVerifyConfig";
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-
-if (!PRIVATE_KEY) {
-  throw new Error(
-    "Could not find PRIVATE_KEY environment variables. It will not be possible to execute transactions in your example.",
-  );
-}
-const accounts: HttpNetworkAccountsUserConfig | undefined = [PRIVATE_KEY];
+if (!PRIVATE_KEY) throw new Error("PRIVATE_KEY is not set");
+const accounts = [PRIVATE_KEY];
 
 const config: HardhatUserConfig = {
+  plugins: [
+    HardhatNodeTestRunner,
+    HardhatViem,
+    HardhatNetworkHelpers,
+    HardhatKeystore,
+    HardhatDeploy,
+  ],
   solidity: {
     compilers: [
       {
@@ -40,129 +38,134 @@ const config: HardhatUserConfig = {
   },
   networks: {
     mainnet: {
-      eid: EndpointId.ETHEREUM_V2_MAINNET,
+      type: "http",
       url: getRpcURL("mainnet"),
-      verify: getVerifyConfig("mainnet"),
       accounts,
     },
     sepolia: {
-      eid: EndpointId.SEPOLIA_V2_TESTNET,
+      type: "http",
       url: getRpcURL("sepolia"),
-      verify: getVerifyConfig("sepolia"),
       accounts,
     },
     polygon: {
-      eid: EndpointId.POLYGON_V2_MAINNET,
+      type: "http",
       url: getRpcURL("polygon"),
-      verify: getVerifyConfig("polygon"),
-      accounts,
-    },
-    amoy: {
-      eid: EndpointId.AMOY_V2_TESTNET,
-      url: getRpcURL("amoy"),
-      verify: getVerifyConfig("amoy"),
       accounts,
     },
     arbiSepolia: {
-      eid: EndpointId.ARBSEP_V2_TESTNET,
+      type: "http",
       url: getRpcURL("arbiSepolia"),
-      verify: getVerifyConfig("arbiSepolia"),
       accounts,
     },
     optimism: {
-      eid: EndpointId.OPTIMISM_V2_MAINNET,
+      type: "http",
       url: getRpcURL("optimism"),
-      verify: getVerifyConfig("optimism"),
       accounts,
     },
     base: {
-      eid: EndpointId.BASE_V2_MAINNET,
+      type: "http",
       url: getRpcURL("base"),
-      verify: getVerifyConfig("base"),
       accounts,
     },
     arbitrum: {
-      eid: EndpointId.ARBITRUM_V2_MAINNET,
+      type: "http",
       url: getRpcURL("arbitrum"),
-      verify: getVerifyConfig("arbitrum"),
       accounts,
     },
     sonic: {
-      eid: EndpointId.SONIC_V2_MAINNET,
+      type: "http",
       url: getRpcURL("sonic"),
-      verify: getVerifyConfig("sonic"),
       accounts,
     },
     sei: {
-      eid: EndpointId.SEI_V2_MAINNET,
+      type: "http",
       url: getRpcURL("sei"),
-      verify: getVerifyConfig("sei"),
       accounts,
     },
     avalanche: {
-      eid: EndpointId.AVALANCHE_V2_MAINNET,
+      type: "http",
       url: getRpcURL("avalanche"),
-      verify: getVerifyConfig("avalanche"),
       accounts,
     },
     bsc: {
-      eid: EndpointId.BSC_V2_MAINNET,
+      type: "http",
       url: getRpcURL("bsc"),
-      verify: getVerifyConfig("bsc"),
       accounts,
     },
     berachain: {
-      eid: EndpointId.BERA_V2_MAINNET,
+      type: "http",
       url: getRpcURL("berachain"),
-      verify: getVerifyConfig("berachain"),
       accounts,
     },
     scroll: {
-      eid: EndpointId.SCROLL_V2_MAINNET,
+      type: "http",
       url: getRpcURL("scroll"),
-      verify: getVerifyConfig("scroll"),
-      accounts,
-    },
-    mantle: {
-      eid: EndpointId.MANTLE_V2_MAINNET,
-      url: getRpcURL("mantle"),
-      verify: getVerifyConfig("mantle"),
       accounts,
     },
     gnosis: {
-      eid: EndpointId.GNOSIS_V2_MAINNET,
+      type: "http",
       url: getRpcURL("gnosis"),
-      verify: getVerifyConfig("gnosis"),
       accounts,
     },
     unichain: {
-      eid: EndpointId.UNICHAIN_V2_MAINNET,
+      type: "http",
       url: getRpcURL("unichain"),
-      verify: getVerifyConfig("unichain"),
       accounts,
     },
     ink: {
-      eid: EndpointId.INK_V2_MAINNET,
+      type: "http",
       url: getRpcURL("ink"),
-      verify: getVerifyConfig("ink"),
       accounts,
     },
     hyperevm: {
-      eid: EndpointId.HYPERLIQUID_V2_MAINNET,
+      type: "http",
       url: getRpcURL("hyperevm"),
-      verify: getVerifyConfig("hyperevm"),
+      accounts,
+    },
+    xlayer: {
+      type: "http",
+      url: getRpcURL("xlayer"),
+      accounts,
+    },
+    plume: {
+      type: "http",
+      url: getRpcURL("plume"),
+      accounts,
+    },
+    plasma: {
+      type: "http",
+      url: getRpcURL("plasma"),
+      accounts,
+    },
+    linea: {
+      type: "http",
+      url: getRpcURL("linea"),
       accounts,
     },
     tac: {
-      eid: EndpointId.TAC_V2_MAINNET,
+      type: "http",
       url: getRpcURL("tac"),
-      verify: getVerifyConfig("tac"),
       accounts,
     },
-  },
-  namedAccounts: {
-    deployer: {
-      default: 0,
+    katana: {
+      type: "http",
+      url: getRpcURL("katana"),
+      accounts,
+    },
+    fraxtal: {
+      type: "http",
+      url: getRpcURL("fraxtal"),
+      accounts,
+    },
+    worldchain: {
+      type: "http",
+      url: getRpcURL("worldchain"),
+      accounts,
+    },
+    hemi: {
+      type: "http",
+      url: getRpcURL("hemi"),
+      accounts,
     },
   },
 };
