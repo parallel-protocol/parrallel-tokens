@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-Thanks for your interest in contributing to the Transmuter system! Transmuter is a community built protocol and anyone
+Thanks for your interest in contributing to Parallel Protocol! Parallel Protocol is a community built project and anyone
 is welcome to improve it.
 
 If you need to get in contact with the repository maintainers, please reach out in the
